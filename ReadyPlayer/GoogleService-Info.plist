@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>902654345261-8f7j4u2p4rpg47s4h122nkbl039ttcmh.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.902654345261-8f7j4u2p4rpg47s4h122nkbl039ttcmh</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAujIEeaMlC9Yg39zOhytutPWOZUn293A0</string>
+	<key>GCM_SENDER_ID</key>
+	<string>902654345261</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.whizbang.ReadyPlayer</string>
+	<key>PROJECT_ID</key>
+	<string>readyplayer-76fee</string>
+	<key>STORAGE_BUCKET</key>
+	<string>readyplayer-76fee.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:902654345261:ios:a1cb68a9be9f8bf7</string>
+	<key>DATABASE_URL</key>
+	<string>https://readyplayer-76fee.firebaseio.com</string>
+</dict>
+</plist>

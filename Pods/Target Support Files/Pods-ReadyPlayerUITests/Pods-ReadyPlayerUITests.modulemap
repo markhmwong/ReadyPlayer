@@ -1,0 +1,6 @@
+framework module Pods_ReadyPlayerUITests {
+  umbrella header "Pods-ReadyPlayerUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

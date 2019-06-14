@@ -10,6 +10,14 @@ import UIKit
 
 class ViewController: UIViewController {
 
+    lazy var roomTableView: UITableView = {
+       let view = UITableView(frame: .zero, style: .plain)
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.delegate = self
+        view.dataSource = self
+        return view
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -18,3 +26,4 @@ class ViewController: UIViewController {
 
 }
 
+extension
