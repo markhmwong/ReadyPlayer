@@ -28,6 +28,10 @@
 		4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030FE22B3580200A184A6 /* Extension+UIView.swift */; };
 		4D90310122B35AEC00A184A6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */; };
 		4D90310422B3974600A184A6 /* Room.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D90310322B3974600A184A6 /* Room.swift */; };
+		4D90310622B4E8D700A184A6 /* DatabaseReferenceKeys.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */; };
+		4D90310822B4FD8E00A184A6 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D90310722B4FD8E00A184A6 /* User.swift */; };
+		4D90310B22B6221600A184A6 /* ReadyRoomViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */; };
+		4D90310E22B64E4C00A184A6 /* ReadyRoomViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */; };
 		6871C662B60C26EBEC2D316D /* Pods_ReadyPlayerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1B6235E110381E32CC4E4556 /* Pods_ReadyPlayerTests.framework */; };
 		7713D80E3B0ADA0CDD4A6A5A /* Pods_ReadyPlayer_WatchKit_App.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E20B97805DD891D8C10A4776 /* Pods_ReadyPlayer_WatchKit_App.framework */; };
 		89EEB61BE926CE498B6E0F80 /* Pods_ReadyPlayerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E394E4BC8AEB33FCF1AC5E89 /* Pods_ReadyPlayerUITests.framework */; };
@@ -127,6 +131,10 @@
 		4D9030FE22B3580200A184A6 /* Extension+UIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+UIView.swift"; sourceTree = "<group>"; };
 		4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		4D90310322B3974600A184A6 /* Room.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Room.swift; sourceTree = "<group>"; };
+		4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseReferenceKeys.swift; sourceTree = "<group>"; };
+		4D90310722B4FD8E00A184A6 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomViewController.swift; sourceTree = "<group>"; };
+		4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomViewModel.swift; sourceTree = "<group>"; };
 		56B696458C7D61BA1EC1B974 /* Pods-ReadyPlayerUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReadyPlayerUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ReadyPlayerUITests/Pods-ReadyPlayerUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		5BF6EA6085819C8BAFE421FC /* Pods-ReadyPlayerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReadyPlayerTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReadyPlayerTests/Pods-ReadyPlayerTests.release.xcconfig"; sourceTree = "<group>"; };
 		639EFCEDCA9BC1F78F0A0513 /* Pods_ReadyPlayer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReadyPlayer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -213,14 +221,17 @@
 			isa = PBXGroup;
 			children = (
 				4D90310222B3973700A184A6 /* Room */,
+				4D90310922B621FE00A184A6 /* ReadyRoom */,
+				4D9030F922B34D4100A184A6 /* Main */,
+				4D90310C22B62C5D00A184A6 /* User */,
 				4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */,
 				4D9030FE22B3580200A184A6 /* Extension+UIView.swift */,
-				4D9030F922B34D4100A184A6 /* Main */,
 				4D9030A222B2189B00A184A6 /* AppDelegate.swift */,
 				4D9030A622B2189B00A184A6 /* Main.storyboard */,
 				4D9030A922B2189D00A184A6 /* Assets.xcassets */,
 				4D9030AB22B2189D00A184A6 /* LaunchScreen.storyboard */,
 				4D9030AE22B2189D00A184A6 /* Info.plist */,
+				4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */,
 			);
 			path = ReadyPlayer;
 			sourceTree = "<group>";
@@ -282,6 +293,23 @@
 				4D90310322B3974600A184A6 /* Room.swift */,
 			);
 			path = Room;
+			sourceTree = "<group>";
+		};
+		4D90310922B621FE00A184A6 /* ReadyRoom */ = {
+			isa = PBXGroup;
+			children = (
+				4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */,
+				4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */,
+			);
+			path = ReadyRoom;
+			sourceTree = "<group>";
+		};
+		4D90310C22B62C5D00A184A6 /* User */ = {
+			isa = PBXGroup;
+			children = (
+				4D90310722B4FD8E00A184A6 /* User.swift */,
+			);
+			path = User;
 			sourceTree = "<group>";
 		};
 		67FF5B031E78E72E84051BAF /* Pods */ = {
@@ -658,6 +686,10 @@
 				4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */,
 				4D90310422B3974600A184A6 /* Room.swift in Sources */,
 				4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */,
+				4D90310822B4FD8E00A184A6 /* User.swift in Sources */,
+				4D90310E22B64E4C00A184A6 /* ReadyRoomViewModel.swift in Sources */,
+				4D90310B22B6221600A184A6 /* ReadyRoomViewController.swift in Sources */,
+				4D90310622B4E8D700A184A6 /* DatabaseReferenceKeys.swift in Sources */,
 				4D9030FB22B34D8C00A184A6 /* ViewController+UITableView.swift in Sources */,
 				4D9030FD22B34E5C00A184A6 /* MainViewModel.swift in Sources */,
 			);

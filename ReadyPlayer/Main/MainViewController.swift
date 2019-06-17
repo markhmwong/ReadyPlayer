@@ -44,54 +44,68 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         view.addSubview(roomTableView)
-        roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomId")
+        roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomIdCell")
         roomTableView.anchorView(top: view.topAnchor, bottom: view.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
         
-
-        
+        isUserLoggedIn()
         authenticateAnonymously()
     }
     
     func authenticateAnonymously() {
         Auth.auth().signInAnonymously() { (authResult, error) in
             let user = authResult?.user
-            let isAnonymous = user?.isAnonymous  // true
+            _ = user?.isAnonymous  // true
             let uid = user?.uid
             
-            let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
+            let ref = self.viewModel!.ref
         
             let values = ["userid" : uid, "username" : ""]
-            let userRef = ref.child("users")
+            let userRef = ref.child(DatabaseReferenceKeys.users.rawValue)
             let userIdRef = userRef.child("\(uid!)")
             
             
-            userIdRef.updateChildValues(values, withCompletionBlock: { (err, ref) in
+            userIdRef.updateChildValues(values as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
                 if err != nil {
-                    print(err)
+                    print(err!)
                     return
                 }
-
-                print("User has been saved")
             })
         }
-        
+    }
+    
+    //move to viewmodel
+    func isUserLoggedIn() {
         Auth.auth().addStateDidChangeListener { (auth, user) in
-            guard user == nil else {
-                return
+        
+            if (user != nil) {
+                print(user!.uid)
+                self.loadRoomsFor(user: user!.uid)
             }
-            
-            print("user \(user?.uid)")
+        }
+    }
+    
+    func loadRoomsFor(user: String) {
+        Room.getRoomsFrom(ref: viewModel!.ref, userId: user) { (roomArr) in
+            //assign to tableview
+            self.reloadTableWithRoom(data: roomArr)
         }
     }
     
     @objc func handleCreateRoom() {
-        print("create room")
         
         let alert = UIAlertController(title: "Great Title", message: "Please input something", preferredStyle: UIAlertController.Style.alert)
         let action = UIAlertAction(title: "Room Name", style: .default) { (alertAction) in
             let textField = alert.textFields![0] as UITextField
-            let ref = Database.database().reference()
-            Room.createRoom(databaseRef: ref, name: textField.text!)
+            let ref = self.viewModel!.ref
+            let currentUser = Auth.auth().currentUser
+            
+            Room.createRoom(ref: ref, name: textField.text!, creatorId: currentUser!.uid, completionHandler: {
+                //refresh room list - look for another method to do this. Althought new rooms aren't created frequently this may be okay
+                Room.getRoomsFrom(ref: self.viewModel!.ref, userId: User.getCurrentLoggedInUserKey()) { (roomArr) in
+                    //assign to tableview
+                    self.reloadTableWithRoom(data: roomArr)
+                }
+            })
         }
         
         alert.addTextField { (textField) in
@@ -100,6 +114,14 @@ class MainViewController: UIViewController {
         
         alert.addAction(action)
         self.present(alert, animated:true, completion: nil)
+    }
+    
+    func reloadTableWithRoom(data: [Room]) {
+        self.viewModel?.dataSource = []
+        self.viewModel?.dataSource = data
+        DispatchQueue.main.async {
+            self.roomTableView.reloadData()
+        }
     }
 }
 

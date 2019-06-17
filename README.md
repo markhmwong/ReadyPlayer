@@ -16,14 +16,20 @@ chat rooms list page
 
 # Firebase Data Structure
 
+RoomCheck
+    RoomId
+        readyCheck
+        readyCheckInProgress
+
 Room
+    roomcreator
     roomId
     name
     inviteLink
     
-RoomUsers
-    roomId
-        userId
+UserRooms
+    userId
+        roomId
     
 RoomReadyChecks 
     roomId

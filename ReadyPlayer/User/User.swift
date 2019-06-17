@@ -7,8 +7,19 @@
 //
 
 import Foundation
+import Firebase
 
-struct User {
-    var name: String
-    var userId: String
+class User {
+    typealias UserId = String
+    
+    var name: String?
+    var userId: String?
+}
+
+extension User {
+    
+    static func getCurrentLoggedInUserKey() -> UserId {
+        return Auth.auth().currentUser?.uid ?? ""
+    }
+    
 }

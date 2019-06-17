@@ -7,7 +7,10 @@
 //
 
 import Foundation
+import Firebase
 
 class MainViewModel {
+    let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
     
+    var dataSource: [Room] = []
 }

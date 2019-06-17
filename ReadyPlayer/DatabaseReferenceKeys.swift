@@ -7,3 +7,10 @@
 //
 
 import Foundation
+
+enum DatabaseReferenceKeys: String {
+    case rooms = "rooms"
+    case userRooms = "userRooms"
+    case users = "users"
+    case roomsCheck = "roomsCheck"
+}
