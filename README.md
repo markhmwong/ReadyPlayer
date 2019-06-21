@@ -3,14 +3,22 @@
 A ready check application that allows anonymous sign in.
 
 ## To do list
-Group check
-Group "chat room"
-Tie name to anonymous user
-Create chat room -> invite users via link
-remove users
-block users
-add users
-
+anonymous authentication <done>
+Group "chat room" <done>
+Tie name to anonymous user <done>
+Chat Room
+    Group check
+    create room <done>
+    invite users via link
+    remove users
+    block users
+    add users
+        add user through an invite link
+            any user can send another user a "link" of the chat room.
+            invite has an expiry
+        user requests access to chat room
+            will need a search
+        
 profile page
 chat rooms list page
 

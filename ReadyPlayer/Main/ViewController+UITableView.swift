@@ -25,9 +25,9 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let dataSource = viewModel?.dataSource else { return }
         let roomObj = dataSource[indexPath.row]
-        let readyRoomViewModel = ReadyRoomViewModel(delegate: self, room: roomObj)
+        let readyRoomViewModel = ReadyRoomViewModel(delegate: nil, room: roomObj)
         let viewController = ReadyRoomViewController(viewModel: readyRoomViewModel)
-        
+        readyRoomViewModel.delegate = viewController
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     

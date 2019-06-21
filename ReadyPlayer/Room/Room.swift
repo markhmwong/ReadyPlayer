@@ -33,7 +33,7 @@ extension Room {
         
         let data = ["id" : newRoom.key, "name" : name, "inviteLink" : newRoom.key, "creator" : creatorId]
         
-        newRoom.updateChildValues(data) { (err, ref) in
+        newRoom.updateChildValues(data as [AnyHashable : Any]) { (err, ref) in
             if err != nil {
                 print("creating room error")
             }

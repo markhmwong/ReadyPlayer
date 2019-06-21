@@ -11,20 +11,22 @@ import Firebase
 class ReadyRoomViewModel {
     let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
     
-    var timerLimit: Double = 5.0
+    var timerLimit: Double = 7.0
     
     var timer: Timer?
     
     let room: Room?
     //    var dataSource = []
     
-    var delegate: MainViewController?
+    var delegate: ReadyRoomViewController?
     
     var expires: Date?
     
     var begins: Date?
     
-    init(delegate: MainViewController, room: Room) {
+    var timeRemaining: TimeInterval = 0.0
+    
+    init(delegate: ReadyRoomViewController?, room: Room) {
         self.delegate = delegate
         self.room = room
     }
@@ -48,8 +50,22 @@ class ReadyRoomViewModel {
     }
     
     @objc func update() {
-        let time = expires?.timeIntervalSince(Date())
-        print(time?.secondsToHoursMinutesSeconds())
+        guard let time = expires?.timeIntervalSince(Date()) else {
+            timeRemaining = -1
+            return
+        }
+        
+        if (time <= 0) {
+            stopTimer()
+        }
+        timeRemaining = time
+        updateTimeLabel()
+    }
+    
+    func updateTimeLabel() {
+        guard let delegate = delegate else { return }
+        
+        delegate.mainView.updateTimeLabel(timeStr: "\(timeRemaining)")
     }
 }
 

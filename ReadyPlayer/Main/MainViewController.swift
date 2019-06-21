@@ -51,6 +51,7 @@ class MainViewController: UIViewController {
         authenticateAnonymously()
     }
     
+    //move to user
     func authenticateAnonymously() {
         Auth.auth().signInAnonymously() { (authResult, error) in
             let user = authResult?.user
@@ -62,7 +63,6 @@ class MainViewController: UIViewController {
             let values = ["userid" : uid, "username" : ""]
             let userRef = ref.child(DatabaseReferenceKeys.users.rawValue)
             let userIdRef = userRef.child("\(uid!)")
-            
             
             userIdRef.updateChildValues(values as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
                 if err != nil {
