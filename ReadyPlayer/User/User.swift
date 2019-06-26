@@ -9,11 +9,13 @@
 import Foundation
 import Firebase
 
-class User {
+class User: NSObject {
     typealias UserId = String
     
-    var name: String?
-    var userId: String?
+    // expose members to objc runtime for setValuesForKeys method in Room.swift when getting users in a room
+    @objc var token: String?
+    @objc var userId: String?
+    @objc var userName: String?
 }
 
 extension User {
@@ -21,5 +23,5 @@ extension User {
     static func getCurrentLoggedInUserKey() -> UserId {
         return Auth.auth().currentUser?.uid ?? ""
     }
-    
+
 }

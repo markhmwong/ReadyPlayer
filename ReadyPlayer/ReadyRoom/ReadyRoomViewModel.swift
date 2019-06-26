@@ -11,20 +11,45 @@ import Firebase
 class ReadyRoomViewModel {
     let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
     
-    var timerLimit: Double = 7.0
+    var timerLimit: Double = 8.0
     
     var timer: Timer?
     
     let room: Room?
-    //    var dataSource = []
     
     var delegate: ReadyRoomViewController?
     
     var expires: Date?
     
-    var begins: Date?
+    var userList: [User] = []
     
-    var timeRemaining: TimeInterval = 0.0
+    var didInitiate: Bool?
+    
+    var myUserId: String = User.getCurrentLoggedInUserKey()
+    
+    var inProgress: Bool? {
+        didSet {
+            
+            if inProgress ?? false {
+                delegate?.mainView.status.text = "true"
+                delegate?.mainView.readyButton.isHidden = false
+                startTimer()
+            } else {
+                delegate?.mainView.status.text = "false"
+                delegate?.mainView.readyButton.isHidden = true
+            }
+        }
+    }
+    
+    var localBegins: Date?
+    
+    var timeRemaining: TimeInterval = 0.0 {
+        didSet {
+            if (timeRemaining <= 0.0) {
+                timeRemaining = 0.0
+            }
+        }
+    }
     
     init(delegate: ReadyRoomViewController?, room: Room) {
         self.delegate = delegate
@@ -46,25 +71,27 @@ class ReadyRoomViewModel {
         if (timer != nil) {
             timer?.invalidate()
             timer = nil
+            expires = nil
         }
     }
     
     @objc func update() {
+
         guard let time = expires?.timeIntervalSince(Date()) else {
             timeRemaining = -1
             return
         }
         
         if (time <= 0) {
+            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0) // update in cloud functions
             stopTimer()
         }
-        timeRemaining = time
+        timeRemaining = time.rounded(.down)
         updateTimeLabel()
     }
     
     func updateTimeLabel() {
         guard let delegate = delegate else { return }
-        
         delegate.mainView.updateTimeLabel(timeStr: "\(timeRemaining)")
     }
 }

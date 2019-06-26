@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Firebase
 
 class ReadyRoomViewController: UIViewController {
     
@@ -43,79 +44,60 @@ class ReadyRoomViewController: UIViewController {
         view.backgroundColor = .white
         view.addSubview(mainView)
         mainView.fillSuperView()
+        
+        guard let roomId = viewModel?.room?.id else { return }
+        
+        Messaging.messaging().subscribe(toTopic: roomId) { error in
+            if error != nil {
+                print("error subscribing to chat room")
+                return
+            }
+            print("subscribed to chat room")
+        }
+        observeDateOfReadyState(roomId)
+        
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard let viewModel = viewModel else { return }
+        let ref = viewModel.ref
+        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { (userArr) in
+            print("retreived all users")
+            viewModel.userList = userArr
+            self.mainView.users.text = userArr[0].userName
+            //update tableview
+        }
+    }
+    
+    func observeDateOfReadyState(_ roomId: String) {
+        Room.observeReadyStateDate(ref: viewModel!.ref, roomId: roomId) { (date, inProgress) in
+            let myDate = date
+            self.viewModel?.inProgress = inProgress
+            self.viewModel?.expires = date
+        }
     }
     
     @objc func handleAddUser() {
+        guard let room = viewModel?.room else { return }
+        let roomId = room.id!
         
-        // get room id
+        let alert = UIAlertController(title: "Add User", message: "Enter a user Id", preferredStyle: UIAlertController.Style.alert)
+        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in
+            let textField = alert.textFields![0] as UITextField
+            let ref = self.viewModel!.ref
+            let currentUser = Auth.auth().currentUser
+            
+            Room.addNewUser(ref: ref, userId: textField.text!, roomId: roomId)
+        }
         
-        // 
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter the unique id of the user"
+        }
         
+        alert.addAction(action)
+        self.present(alert, animated:true, completion: nil)
     }
 }
 
-class ReadyRoomView: UIView {
-    
-    var delegate: ReadyRoomViewController?
-    
-    lazy var time: UILabel = {
-       let label = UILabel()
-        label.text = "0"
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    lazy var readyCheckButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Ready", for: .normal)
-        button.setTitleColor(.black, for: .normal)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(handleReadyButton), for: .touchUpInside)
-        return button
-    }()
-    
-    lazy var roomTitle: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    init(delegate: ReadyRoomViewController) {
-        self.delegate = delegate
-        super.init(frame: .zero)
-        self.setupView()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    @objc func handleReadyButton() {
-        guard let vm = delegate?.viewModel else { return }
-        let room = vm.room
-        Room.readyStateUpdate(ref: vm.ref, userId: User.getCurrentLoggedInUserKey(), roomId: room?.id ?? "")
-        
-        //initiate countdown
-        vm.begins = Date()
-        vm.expires = vm.begins?.addingTimeInterval(vm.timerLimit)
-        vm.startTimer()
-    }
-    
-    func setupView() {
-        let room = delegate?.viewModel?.room
-        roomTitle.text = "\(room?.name ?? "unknown")"
-        roomTitle.sizeToFit()
-        
-        addSubview(time)
-        addSubview(roomTitle)
-        addSubview(readyCheckButton)
-        time.anchorView(top: nil, bottom: readyCheckButton.topAnchor, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-        roomTitle.anchorView(top: safeAreaLayoutGuide.topAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-        readyCheckButton.anchorView(top: nil, bottom: nil, leading: nil, trailing: nil, centerY: centerYAnchor, centerX: centerXAnchor, padding: .zero, size: CGSize(width: 60.0, height: 30.0))
-    }
-    
-    func updateTimeLabel(timeStr: String) {
-        time.text = timeStr
-    }
-}
+

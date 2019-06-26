@@ -13,6 +13,8 @@ class MainViewController: UIViewController {
 
     var viewModel: MainViewModel?
     
+    var awaitToken = DispatchGroup()
+    
     lazy var roomTableView: UITableView = {
        let view = UITableView(frame: .zero, style: .plain)
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -46,12 +48,10 @@ class MainViewController: UIViewController {
         view.addSubview(roomTableView)
         roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomIdCell")
         roomTableView.anchorView(top: view.topAnchor, bottom: view.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
-        
         isUserLoggedIn()
         authenticateAnonymously()
     }
     
-    //move to user
     func authenticateAnonymously() {
         Auth.auth().signInAnonymously() { (authResult, error) in
             let user = authResult?.user
@@ -59,16 +59,30 @@ class MainViewController: UIViewController {
             let uid = user?.uid
             
             let ref = self.viewModel!.ref
-        
-            let values = ["userid" : uid, "username" : ""]
-            let userRef = ref.child(DatabaseReferenceKeys.users.rawValue)
-            let userIdRef = userRef.child("\(uid!)")
-            
-            userIdRef.updateChildValues(values as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
-                if err != nil {
-                    print(err!)
-                    return
+            var deviceToken: String = ""
+            self.awaitToken.enter()
+            InstanceID.instanceID().instanceID { (result, error) in
+                if let error = error {
+                    print("Error fetching remote instance ID: \(error)")
+                } else if let result = result {
+                    print("Remote instance ID token: \(result.token)")
+
+                    deviceToken = result.token
                 }
+                self.awaitToken.leave()
+            }
+            
+            self.awaitToken.notify(queue: .main, execute: {
+                let values = ["userId" : uid, "userName" : "", "token" : deviceToken]
+                let userRef = ref.child(DatabaseReferenceKeys.users.rawValue)
+                let userIdRef = userRef.child("\(uid!)")
+                
+                userIdRef.updateChildValues(values as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
+                    if err != nil {
+                        print(err!)
+                        return
+                    }
+                })
             })
         }
     }
@@ -93,7 +107,7 @@ class MainViewController: UIViewController {
     
     @objc func handleCreateRoom() {
         
-        let alert = UIAlertController(title: "Great Title", message: "Please input something", preferredStyle: UIAlertController.Style.alert)
+        let alert = UIAlertController(title: "Create Room", message: "Enter an interesting room name", preferredStyle: UIAlertController.Style.alert)
         let action = UIAlertAction(title: "Room Name", style: .default) { (alertAction) in
             let textField = alert.textFields![0] as UITextField
             let ref = self.viewModel!.ref

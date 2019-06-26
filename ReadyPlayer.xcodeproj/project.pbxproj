@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		2499757C87DFBB80A46A2DDF /* Pods_ReadyPlayer_WatchKit_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85F148FB001AB3FE8CC29D64 /* Pods_ReadyPlayer_WatchKit_Extension.framework */; };
+		4D592CEE22C10EDF0034F087 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CED22C10EDF0034F087 /* Date+Extension.swift */; };
+		4D592CF222C200F00034F087 /* ReadyRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CF122C200F00034F087 /* ReadyRoomView.swift */; };
 		4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A222B2189B00A184A6 /* AppDelegate.swift */; };
 		4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A422B2189B00A184A6 /* MainViewController.swift */; };
 		4D9030A822B2189B00A184A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9030A622B2189B00A184A6 /* Main.storyboard */; };
@@ -101,6 +103,9 @@
 		39D3CE985FC8A2640DEEB6AB /* Pods-ReadyPlayer WatchKit Extension.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReadyPlayer WatchKit Extension.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReadyPlayer WatchKit Extension/Pods-ReadyPlayer WatchKit Extension.release.xcconfig"; sourceTree = "<group>"; };
 		46E076309DDDE4F2DCBBEA78 /* Pods-ReadyPlayerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReadyPlayerTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ReadyPlayerTests/Pods-ReadyPlayerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		48613AB69E9096EC7DB92C7B /* Pods-ReadyPlayerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReadyPlayerUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-ReadyPlayerUITests/Pods-ReadyPlayerUITests.release.xcconfig"; sourceTree = "<group>"; };
+		4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReadyPlayer.entitlements; sourceTree = "<group>"; };
+		4D592CED22C10EDF0034F087 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
+		4D592CF122C200F00034F087 /* ReadyRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomView.swift; sourceTree = "<group>"; };
 		4D90309F22B2189B00A184A6 /* ReadyPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadyPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9030A222B2189B00A184A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D9030A422B2189B00A184A6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -220,6 +225,7 @@
 		4D9030A122B2189B00A184A6 /* ReadyPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */,
 				4D90310222B3973700A184A6 /* Room */,
 				4D90310922B621FE00A184A6 /* ReadyRoom */,
 				4D9030F922B34D4100A184A6 /* Main */,
@@ -232,6 +238,7 @@
 				4D9030AB22B2189D00A184A6 /* LaunchScreen.storyboard */,
 				4D9030AE22B2189D00A184A6 /* Info.plist */,
 				4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */,
+				4D592CED22C10EDF0034F087 /* Date+Extension.swift */,
 			);
 			path = ReadyPlayer;
 			sourceTree = "<group>";
@@ -300,6 +307,7 @@
 			children = (
 				4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */,
 				4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */,
+				4D592CF122C200F00034F087 /* ReadyRoomView.swift */,
 			);
 			path = ReadyRoom;
 			sourceTree = "<group>";
@@ -452,6 +460,14 @@
 				TargetAttributes = {
 					4D90309E22B2189B00A184A6 = {
 						CreatedOnToolsVersion = 10.2;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					4D9030B222B2189D00A184A6 = {
 						CreatedOnToolsVersion = 10.2;
@@ -636,6 +652,7 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-ReadyPlayer/Pods-ReadyPlayer-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
@@ -645,6 +662,7 @@
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -683,6 +701,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */,
+				4D592CEE22C10EDF0034F087 /* Date+Extension.swift in Sources */,
 				4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */,
 				4D90310422B3974600A184A6 /* Room.swift in Sources */,
 				4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */,
@@ -692,6 +711,7 @@
 				4D90310622B4E8D700A184A6 /* DatabaseReferenceKeys.swift in Sources */,
 				4D9030FB22B34D8C00A184A6 /* ViewController+UITableView.swift in Sources */,
 				4D9030FD22B34E5C00A184A6 /* MainViewModel.swift in Sources */,
+				4D592CF222C200F00034F087 /* ReadyRoomView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -981,6 +1001,7 @@
 			baseConfigurationReference = 204D9164C9BA73C788DD7897 /* Pods-ReadyPlayer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ReadyPlayer/ReadyPlayer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GEKZN86RYS;
 				INFOPLIST_FILE = ReadyPlayer/Info.plist;
@@ -1000,6 +1021,7 @@
 			baseConfigurationReference = 2DFDB4F243FBFCE0024D61F8 /* Pods-ReadyPlayer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = ReadyPlayer/ReadyPlayer.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = GEKZN86RYS;
 				INFOPLIST_FILE = ReadyPlayer/Info.plist;

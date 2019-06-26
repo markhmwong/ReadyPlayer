@@ -9,10 +9,14 @@ Tie name to anonymous user <done>
 Chat Room
     Group check
     create room <done>
-    invite users via link
+    invite
+        - invite user with their user ID <done>
+        - invite user with room ID
     remove users
     block users
+    user roles - admin, user
     add users
+        only allow host to add user
         add user through an invite link
             any user can send another user a "link" of the chat room.
             invite has an expiry

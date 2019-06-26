@@ -10,6 +10,7 @@ target 'ReadyPlayer' do
   pod 'Firebase/Storage'
   pod 'Firebase/Analytics'
   pod 'Firebase/Database'
+  pod 'Firebase/Messaging'
 
   target 'ReadyPlayerTests' do
     inherit! :search_paths

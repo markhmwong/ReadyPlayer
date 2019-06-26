@@ -11,12 +11,16 @@ import Firebase
 
 class Room: NSObject {
     var id: String?
+    
     var creator: String?
+    
     var inviteLink: String?
+    
     var name: String?
     
     static var awaitRoom = DispatchGroup()
-
+    
+    
     init(dictionary: [String: Any]) {
         self.id = dictionary["id"] as? String
         self.creator = dictionary["creator"] as? String
@@ -55,9 +59,9 @@ extension Room {
         
         //create roomsCheck
         let refRoomIdCheck = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(newRoom.key!)")
-        
-        let roomCheckInitialData = ["numCheck" : 0, "inProgress": false] as [String : Any]
-        
+        let timeInterval = Date().timeIntervalSince1970
+
+        let roomCheckInitialData = ["numCheck" : 0, "inProgress": false, "checkBeganDate": timeInterval as Double] as [String : Any]
         refRoomIdCheck.updateChildValues(roomCheckInitialData) { (err, ref) in
             if (err != nil) {
                 print("Error initialising roomCheck")
@@ -77,11 +81,11 @@ extension Room {
     }
     
     static func getRoomsFrom(ref: DatabaseReference, userId: String, completionHandler: @escaping ([Room]) -> Void) -> Void {
-        let userRooms = ref.child(DatabaseReferenceKeys.userRooms.rawValue)
-        let myRooms = userRooms.child(userId)
+        let userRoomsRef = ref.child(DatabaseReferenceKeys.userRooms.rawValue)
+        let myRoomsRef = userRoomsRef.child(userId)
         var userRoomsDictionary: [Room] = []
         
-        myRooms.observeSingleEvent(of: .value) { (snapshot) in
+        myRoomsRef.observeSingleEvent(of: .value) { (snapshot) in
             if let object = snapshot.children.allObjects as? [DataSnapshot] {
                 for obj in object {
                     awaitRoom.enter()
@@ -99,23 +103,113 @@ extension Room {
                 }
             }
             awaitRoom.notify(queue: .main, execute: {
-                print(userRoomsDictionary)
                 completionHandler(userRoomsDictionary)
             })
         }
     }
     
-    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String) -> Void {
-        let refRoomCheck = ref.child(DatabaseReferenceKeys.roomsCheck.rawValue)
-        let refRoomIdCheck = refRoomCheck.child(roomId)
-        let refUsersCheck = refRoomIdCheck.child("userState")
+    static func playerReadyUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool) -> Void {
+        let userStateRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
         
-        let dataToUpdate = [userId : true]
-        refUsersCheck.updateChildValues(dataToUpdate) { (err, ref) in
+        userStateRef.updateChildValues([userId : state]) { (err, ref) in
+            if (err != nil) {
+                print("Error updating player ready state")
+                return
+            }
+        }
+    }
+    
+    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
+        var data: [String: Any] = [:]
+        
+        if (state == true) {
+            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSince1970, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSince1970] as [String : Any]
+        } else {
+            data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
+        }
+        
+        roomCheckRef.updateChildValues(data) { (err, ref) in
             if (err != nil) {
                 print("Error updating ready state")
                 return
             }
+        }
+    }
+    
+    static func observeReadyStateDate(ref: DatabaseReference, roomId: String, completionHandler: @escaping (Date, Bool) -> Void) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
+        roomCheckRef.observe(.value) { (snapshot) in
+            let value = snapshot.value as? NSDictionary
+            let date = value?["expires"] as? TimeInterval
+            let inProgress = value?["inProgress"] as? Bool
+
+            completionHandler(Date(timeIntervalSince1970: date ?? 0), inProgress ?? false)
+        }
+    }
+    
+    static func addNewUser(ref: DatabaseReference, userId: String, roomId: String) -> Void {
+        let refUserRooms = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
+        let roomData = [roomId : 1]
+        
+        // Adds new user to an existing room
+        // Add room to userRooms (database) userRooms/{userId}/{roomId}
+        refUserRooms.updateChildValues(roomData) { (err, ref) in
+            if (err != nil) {
+                print("error getting user's rooms")
+                return
+            }
+            print("added user to room")
+        }
+        
+        //add to user state - roomsCheck/{roomId}/userState/{userId}
+        let refRoomCheck = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
+        let data = [userId : false]
+        refRoomCheck.updateChildValues(data) { (err, ref) in
+            if (err != nil) {
+                print("error appending user to room check")
+                return
+            }
+            print("added user to room check")
+        }
+        
+        // todo subscribe to room
+        Messaging.messaging().subscribe(toTopic: "\(roomId)") { error in
+            if error != nil {
+                print("error subscribing to chat room - \(roomId)")
+                return
+            }
+            print("subscribed to chat room")
+            
+        }
+    }
+    
+    static func getUsersInRoom(ref: DatabaseReference, roomId: String, completionHandler: @escaping ([User]) -> Void) -> Void {
+        //waiting animation
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
+        var userArr: [User] = []
+        var awaitUsers = DispatchGroup()
+        roomCheckRef.observe(.value) { (snapshot) in
+            let userState = snapshot.value as? NSDictionary
+            for user in userState! {
+                awaitUsers.enter()
+                let userId = user.key
+                print(userId)
+                let userRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(userId)")
+                
+                userRef.observeSingleEvent(of: .value, with: { (snapshot) in
+                    if let userData = snapshot.value as? [String: AnyObject] {
+                        let user = User()
+                        user.setValuesForKeys(userData)
+                        userArr.append(user)
+                        awaitUsers.leave()
+                    }
+                })
+            }
+            awaitUsers.notify(queue: .main, execute: {
+                completionHandler(userArr)
+            })
+            
         }
     }
 }
