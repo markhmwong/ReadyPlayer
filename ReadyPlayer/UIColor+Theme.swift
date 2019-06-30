@@ -16,6 +16,6 @@ struct Theme {
     
     struct Cell {
         static var background: UIColor = UIColor(red:0.13, green:0.13, blue:0.13, alpha:1.0)
-        static var text: UIColor = UIColor.white
+        static var text: UIColor = UIColor(red:0.91, green:0.53, blue:0.04, alpha:1.0)
     }
 }

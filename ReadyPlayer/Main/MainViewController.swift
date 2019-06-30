@@ -20,7 +20,7 @@ class MainViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
         view.dataSource = self
-        view.rowHeight = UIScreen.main.bounds.height / 5.0
+        view.rowHeight = UIScreen.main.bounds.height / 7.0 //same as delegate's method row size
         view.backgroundColor = Theme.Cell.background.darker(by: 2.0)
         view.separatorStyle = UITableViewCell.SeparatorStyle.none
         return view
@@ -56,7 +56,7 @@ class MainViewController: UIViewController {
         
         // Do any additional setup after loading the view.
         view.addSubview(roomTableView)
-        roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomCellId")
+        roomTableView.register(RoomCell.self, forCellReuseIdentifier: "roomCellId")
         roomTableView.anchorView(top: view.topAnchor, bottom: view.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
         isUserLoggedIn()
         authenticateAnonymously()
@@ -64,7 +64,6 @@ class MainViewController: UIViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        print("did disappear")
         let ref = viewModel?.ref
         ref?.removeAllObservers()
     }
@@ -119,9 +118,7 @@ class MainViewController: UIViewController {
     //move to viewmodel
     func isUserLoggedIn() {
         Auth.auth().addStateDidChangeListener { (auth, user) in
-        
             if (user != nil) {
-                print(user!.uid)
                 self.loadRoomsFor(user: user!.uid)
             }
         }
@@ -130,12 +127,32 @@ class MainViewController: UIViewController {
     func loadRoomsFor(user: String) {
         Room.getRoomsFrom(ref: viewModel!.ref, userId: user) { (roomArr) in
             //assign to tableview
+            self.observeRoomStatus(user: user)
             self.reloadTableWithRoom(data: roomArr)
         }
     }
     
-    @objc func handleCreateRoom() {
+    func observeRoomStatus(user: String) {
         
+        Room.observeReadyStateByUser(ref: viewModel!.ref, userId: user) { (roomStateList) in
+            
+            guard let viewModel = self.viewModel else { return }
+            
+            for room in viewModel.dataSource {
+                for state in roomStateList {
+                    if (room.id == state.key) {
+                        room.inProgress = state.value
+                    }
+                }
+            }
+            
+            for row in self.roomTableView.visibleCells as! [RoomCell] {
+                row.updateRoomStatus(status: row.room?.inProgress)
+            }
+        }
+    }
+    
+    @objc func handleCreateRoom() {
         let alert = UIAlertController(title: "Create Room", message: "Enter an interesting room name", preferredStyle: UIAlertController.Style.alert)
         let action = UIAlertAction(title: "Room Name", style: .default) { (alertAction) in
             let textField = alert.textFields![0] as UITextField
@@ -144,7 +161,13 @@ class MainViewController: UIViewController {
             
             Room.createRoom(ref: ref, name: textField.text!, creatorId: currentUser!.uid, completionHandler: {
                 //refresh room list - look for another method to do this. Althought new rooms aren't created frequently this may be okay
-                Room.getRoomsFrom(ref: self.viewModel!.ref, userId: User.getCurrentLoggedInUserKey()) { (roomArr) in
+                Room.getRoomsFrom(ref: self.viewModel!.ref, userId: currentUser!.uid) { (roomArr) in
+                    
+                    Room.observeReadyStateByUser(ref: self.viewModel!.ref, userId: currentUser!.uid, completionHandler: { (inProgress) in
+                        //update the room status label for cell
+                        
+                    })
+                    
                     //assign to tableview
                     self.reloadTableWithRoom(data: roomArr)
                 }

@@ -14,17 +14,13 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "roomCellId", for: indexPath)
-        cell.textLabel?.text = viewModel?.dataSource[indexPath.row].name
-        cell.textLabel?.attributedText = NSAttributedString(string: (viewModel?.dataSource[indexPath.row].name?.uppercased())!, attributes: [NSAttributedString.Key.kern : 2.0, NSAttributedString.Key.foregroundColor : UIColor(red:0.91, green:0.53, blue:0.04, alpha:1.0)])
-        cell.textLabel?.textAlignment = .center
-        cell.backgroundColor = Theme.Cell.background
-
+        let cell = tableView.dequeueReusableCell(withIdentifier: "roomCellId", for: indexPath) as! RoomCell
+        cell.room = viewModel?.dataSource[indexPath.row]
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UIScreen.main.bounds.height / 5.0
+        return UIScreen.main.bounds.height / 7.0
     }
 }
 
@@ -37,10 +33,9 @@ extension MainViewController: UITableViewDelegate {
         let viewController = ReadyRoomViewController(viewModel: readyRoomViewModel)
         readyRoomViewModel.delegate = viewController
 
-        self.navigationController?.present(viewController, animated: true, completion: {
-            
-        })
         tableView.deselectRow(at: indexPath, animated: true)
+        self.navigationController?.present(viewController, animated: true, completion: nil)
+        
     }
     
 }

@@ -19,14 +19,16 @@ class Room: NSObject {
     
     var name: String?
     
-    static var awaitRoom = DispatchGroup()
+    var inProgress: Bool?
     
+    static var awaitRoom = DispatchGroup()
     
     init(dictionary: [String: Any]) {
         self.id = dictionary["id"] as? String
         self.creator = dictionary["creator"] as? String
         self.inviteLink = dictionary["inviteLink"] as? String
         self.name = dictionary["name"] as? String
+        self.inProgress = dictionary["inProgress"] as? Bool
     }
 }
 
@@ -36,7 +38,7 @@ extension Room {
         let refRooms = ref.child(DatabaseReferenceKeys.rooms.rawValue)
         let newRoom = refRooms.childByAutoId()
         
-        let data = ["id" : newRoom.key, "name" : name, "inviteLink" : newRoom.key, "creator" : creatorId]
+        let data = ["id" : newRoom.key, "name" : name, "inviteLink" : newRoom.key, "creator" : creatorId, "inProgress" : false] as [String : Any]
         
         newRoom.updateChildValues(data as [AnyHashable : Any]) { (err, ref) in
             if err != nil {
@@ -163,9 +165,18 @@ extension Room {
         }
     }
     
+    
+    static func observeReadyStateByUser(ref: DatabaseReference, userId: String, completionHandler: @escaping ([String : Bool]) -> Void) {
+        let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
+        userRoomsRef.observe(.value) { (snapShot) in
+            let inProgress = snapShot.value as! [String : Bool]
+            completionHandler(inProgress)
+        }
+    }
+    
     static func addNewUser(ref: DatabaseReference, userId: String, roomId: String) -> Void {
         let refUserRooms = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
-        let roomData = [roomId : 1]
+        let roomData = [roomId : false] // is also the status of the room
         
         // Adds new user to an existing room
         // Add room to userRooms (database) userRooms/{userId}/{roomId}

@@ -14,6 +14,7 @@
 		4D592CF922C763650034F087 /* ReadyRoomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */; };
 		4D592CFB22C79D610034F087 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFA22C79D610034F087 /* UIColor+Theme.swift */; };
 		4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */; };
+		4D592D0022C8BEE30034F087 /* RoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFF22C8BEE30034F087 /* RoomCell.swift */; };
 		4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A222B2189B00A184A6 /* AppDelegate.swift */; };
 		4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A422B2189B00A184A6 /* MainViewController.swift */; };
 		4D9030A822B2189B00A184A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9030A622B2189B00A184A6 /* Main.storyboard */; };
@@ -29,7 +30,7 @@
 		4D9030DE22B2189E00A184A6 /* ExtensionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030DD22B2189E00A184A6 /* ExtensionDelegate.swift */; };
 		4D9030E022B2189E00A184A6 /* NotificationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030DF22B2189E00A184A6 /* NotificationController.swift */; };
 		4D9030E222B2189F00A184A6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4D9030E122B2189F00A184A6 /* Assets.xcassets */; };
-		4D9030FB22B34D8C00A184A6 /* ViewController+UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030FA22B34D8C00A184A6 /* ViewController+UITableView.swift */; };
+		4D9030FB22B34D8C00A184A6 /* MainViewController+UITableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030FA22B34D8C00A184A6 /* MainViewController+UITableView.swift */; };
 		4D9030FD22B34E5C00A184A6 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030FC22B34E5C00A184A6 /* MainViewModel.swift */; };
 		4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030FE22B3580200A184A6 /* Extension+UIView.swift */; };
 		4D90310122B35AEC00A184A6 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */; };
@@ -114,6 +115,7 @@
 		4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomHeaderView.swift; sourceTree = "<group>"; };
 		4D592CFA22C79D610034F087 /* UIColor+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
 		4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
+		4D592CFF22C8BEE30034F087 /* RoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCell.swift; sourceTree = "<group>"; };
 		4D90309F22B2189B00A184A6 /* ReadyPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadyPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9030A222B2189B00A184A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D9030A422B2189B00A184A6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -139,7 +141,7 @@
 		4D9030E322B2189F00A184A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		4D9030E422B2189F00A184A6 /* PushNotificationPayload.apns */ = {isa = PBXFileReference; lastKnownFileType = text; path = PushNotificationPayload.apns; sourceTree = "<group>"; };
 		4D9030F822B21B6300A184A6 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		4D9030FA22B34D8C00A184A6 /* ViewController+UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+UITableView.swift"; sourceTree = "<group>"; };
+		4D9030FA22B34D8C00A184A6 /* MainViewController+UITableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainViewController+UITableView.swift"; sourceTree = "<group>"; };
 		4D9030FC22B34E5C00A184A6 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		4D9030FE22B3580200A184A6 /* Extension+UIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Extension+UIView.swift"; sourceTree = "<group>"; };
 		4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -203,12 +205,29 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		4D592CF522C609070034F087 /* cell */ = {
+		4D592CF522C609070034F087 /* Cell */ = {
 			isa = PBXGroup;
 			children = (
 				4D592CF622C6097A0034F087 /* UserCell.swift */,
 			);
-			path = cell;
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		4D592CFE22C8BED00034F087 /* Cell */ = {
+			isa = PBXGroup;
+			children = (
+				4D592CFF22C8BEE30034F087 /* RoomCell.swift */,
+			);
+			path = Cell;
+			sourceTree = "<group>";
+		};
+		4D592D0122C8D30C0034F087 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				4D90310722B4FD8E00A184A6 /* User.swift */,
+				4D90310322B3974600A184A6 /* Room.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 		4D90309622B2189B00A184A6 = {
@@ -241,11 +260,10 @@
 		4D9030A122B2189B00A184A6 /* ReadyPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				4D592D0122C8D30C0034F087 /* Model */,
 				4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */,
-				4D90310222B3973700A184A6 /* Room */,
 				4D90310922B621FE00A184A6 /* ReadyRoom */,
 				4D9030F922B34D4100A184A6 /* Main */,
-				4D90310C22B62C5D00A184A6 /* User */,
 				4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */,
 				4D9030FE22B3580200A184A6 /* Extension+UIView.swift */,
 				4D9030A222B2189B00A184A6 /* AppDelegate.swift */,
@@ -305,39 +323,24 @@
 		4D9030F922B34D4100A184A6 /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				4D592CFE22C8BED00034F087 /* Cell */,
 				4D9030A422B2189B00A184A6 /* MainViewController.swift */,
 				4D9030FC22B34E5C00A184A6 /* MainViewModel.swift */,
-				4D9030FA22B34D8C00A184A6 /* ViewController+UITableView.swift */,
+				4D9030FA22B34D8C00A184A6 /* MainViewController+UITableView.swift */,
 			);
 			path = Main;
-			sourceTree = "<group>";
-		};
-		4D90310222B3973700A184A6 /* Room */ = {
-			isa = PBXGroup;
-			children = (
-				4D90310322B3974600A184A6 /* Room.swift */,
-			);
-			path = Room;
 			sourceTree = "<group>";
 		};
 		4D90310922B621FE00A184A6 /* ReadyRoom */ = {
 			isa = PBXGroup;
 			children = (
-				4D592CF522C609070034F087 /* cell */,
+				4D592CF522C609070034F087 /* Cell */,
 				4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */,
 				4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */,
 				4D592CF122C200F00034F087 /* ReadyRoomView.swift */,
 				4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */,
 			);
 			path = ReadyRoom;
-			sourceTree = "<group>";
-		};
-		4D90310C22B62C5D00A184A6 /* User */ = {
-			isa = PBXGroup;
-			children = (
-				4D90310722B4FD8E00A184A6 /* User.swift */,
-			);
-			path = User;
 			sourceTree = "<group>";
 		};
 		67FF5B031E78E72E84051BAF /* Pods */ = {
@@ -733,10 +736,11 @@
 				4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */,
 				4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */,
 				4D90310822B4FD8E00A184A6 /* User.swift in Sources */,
+				4D592D0022C8BEE30034F087 /* RoomCell.swift in Sources */,
 				4D90310E22B64E4C00A184A6 /* ReadyRoomViewModel.swift in Sources */,
 				4D90310B22B6221600A184A6 /* ReadyRoomViewController.swift in Sources */,
 				4D90310622B4E8D700A184A6 /* DatabaseReferenceKeys.swift in Sources */,
-				4D9030FB22B34D8C00A184A6 /* ViewController+UITableView.swift in Sources */,
+				4D9030FB22B34D8C00A184A6 /* MainViewController+UITableView.swift in Sources */,
 				4D9030FD22B34E5C00A184A6 /* MainViewModel.swift in Sources */,
 				4D592CF222C200F00034F087 /* ReadyRoomView.swift in Sources */,
 			);
