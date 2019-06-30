@@ -7,14 +7,6 @@ anonymous authentication <done>
 Group "chat room" <done>
 Tie name to anonymous user <done>
 Chat Room
-    Group check
-    create room <done>
-    invite
-        - invite user with their user ID <done>
-        - invite user with room ID
-    remove users
-    block users
-    user roles - admin, user
     add users
         only allow host to add user
         add user through an invite link

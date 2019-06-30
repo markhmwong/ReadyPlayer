@@ -16,6 +16,7 @@ class User: NSObject {
     @objc var token: String?
     @objc var userId: String?
     @objc var userName: String?
+    var state: Bool?
 }
 
 extension User {

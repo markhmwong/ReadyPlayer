@@ -10,6 +10,7 @@ import Foundation
 import Firebase
 
 class Room: NSObject {
+    
     var id: String?
     
     var creator: String?
@@ -119,6 +120,7 @@ extension Room {
         }
     }
     
+    // Updates the roomsCheck node
     static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double) -> Void {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
         var data: [String: Any] = [:]
@@ -137,14 +139,27 @@ extension Room {
         }
     }
     
-    static func observeReadyStateDate(ref: DatabaseReference, roomId: String, completionHandler: @escaping (Date, Bool) -> Void) -> Void {
-        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
+    static func observeReadyState(ref: DatabaseReference, roomId: String, completionHandler: @escaping ([String : Bool]) -> Void) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
         roomCheckRef.observe(.value) { (snapshot) in
-            let value = snapshot.value as? NSDictionary
-            let date = value?["expires"] as? TimeInterval
-            let inProgress = value?["inProgress"] as? Bool
+            let userStateDict = snapshot.value as? [String : Bool]
+            completionHandler(userStateDict ?? [:])
+        }
+    }
+    
+    static func observeReadyStateInProgress(ref: DatabaseReference, roomId: String, completionHandler: @escaping (Bool) -> Void) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/inProgress")
+        roomCheckRef.observe(.value) { (snapshot) in
+            let inProgress = snapshot.value as? Bool
+            completionHandler(inProgress!)
+        }
+    }
 
-            completionHandler(Date(timeIntervalSince1970: date ?? 0), inProgress ?? false)
+    static func observeReadyStateDate(ref: DatabaseReference, roomId: String, completionHandler: @escaping (Date) -> Void) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/expires")
+        roomCheckRef.observe(.value) { (snapshot) in
+            let date = snapshot.value as? TimeInterval
+            completionHandler(Date(timeIntervalSince1970: date ?? 0))
         }
     }
     
@@ -187,14 +202,13 @@ extension Room {
     static func getUsersInRoom(ref: DatabaseReference, roomId: String, completionHandler: @escaping ([User]) -> Void) -> Void {
         //waiting animation
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
-        var userArr: [User] = []
-        var awaitUsers = DispatchGroup()
         roomCheckRef.observe(.value) { (snapshot) in
+            let awaitUsers = DispatchGroup()
+            var userArr: [User] = []
             let userState = snapshot.value as? NSDictionary
             for user in userState! {
                 awaitUsers.enter()
                 let userId = user.key
-                print(userId)
                 let userRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(userId)")
                 
                 userRef.observeSingleEvent(of: .value, with: { (snapshot) in

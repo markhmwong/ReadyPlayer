@@ -57,7 +57,6 @@ class ReadyRoomViewModel {
     }
     
     func startTimer() {
-        
         if (timer == nil) {
             timer?.invalidate()
             let timerInterval = 0.1
@@ -67,7 +66,6 @@ class ReadyRoomViewModel {
     }
     
     func stopTimer() {
-        
         if (timer != nil) {
             timer?.invalidate()
             timer = nil
@@ -83,7 +81,8 @@ class ReadyRoomViewModel {
         }
         
         if (time <= 0) {
-            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0) // update in cloud functions
+            // reset room
+            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0)
             stopTimer()
         }
         timeRemaining = time.rounded(.down)

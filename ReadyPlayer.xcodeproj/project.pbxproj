@@ -10,6 +10,10 @@
 		2499757C87DFBB80A46A2DDF /* Pods_ReadyPlayer_WatchKit_Extension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 85F148FB001AB3FE8CC29D64 /* Pods_ReadyPlayer_WatchKit_Extension.framework */; };
 		4D592CEE22C10EDF0034F087 /* Date+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CED22C10EDF0034F087 /* Date+Extension.swift */; };
 		4D592CF222C200F00034F087 /* ReadyRoomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CF122C200F00034F087 /* ReadyRoomView.swift */; };
+		4D592CF722C6097A0034F087 /* UserCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CF622C6097A0034F087 /* UserCell.swift */; };
+		4D592CF922C763650034F087 /* ReadyRoomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */; };
+		4D592CFB22C79D610034F087 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFA22C79D610034F087 /* UIColor+Theme.swift */; };
+		4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */; };
 		4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A222B2189B00A184A6 /* AppDelegate.swift */; };
 		4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A422B2189B00A184A6 /* MainViewController.swift */; };
 		4D9030A822B2189B00A184A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9030A622B2189B00A184A6 /* Main.storyboard */; };
@@ -106,6 +110,10 @@
 		4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReadyPlayer.entitlements; sourceTree = "<group>"; };
 		4D592CED22C10EDF0034F087 /* Date+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Date+Extension.swift"; sourceTree = "<group>"; };
 		4D592CF122C200F00034F087 /* ReadyRoomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomView.swift; sourceTree = "<group>"; };
+		4D592CF622C6097A0034F087 /* UserCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserCell.swift; sourceTree = "<group>"; };
+		4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadyRoomHeaderView.swift; sourceTree = "<group>"; };
+		4D592CFA22C79D610034F087 /* UIColor+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
+		4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		4D90309F22B2189B00A184A6 /* ReadyPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadyPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9030A222B2189B00A184A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D9030A422B2189B00A184A6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -195,6 +203,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4D592CF522C609070034F087 /* cell */ = {
+			isa = PBXGroup;
+			children = (
+				4D592CF622C6097A0034F087 /* UserCell.swift */,
+			);
+			path = cell;
+			sourceTree = "<group>";
+		};
 		4D90309622B2189B00A184A6 = {
 			isa = PBXGroup;
 			children = (
@@ -239,6 +255,8 @@
 				4D9030AE22B2189D00A184A6 /* Info.plist */,
 				4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */,
 				4D592CED22C10EDF0034F087 /* Date+Extension.swift */,
+				4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */,
+				4D592CFA22C79D610034F087 /* UIColor+Theme.swift */,
 			);
 			path = ReadyPlayer;
 			sourceTree = "<group>";
@@ -305,9 +323,11 @@
 		4D90310922B621FE00A184A6 /* ReadyRoom */ = {
 			isa = PBXGroup;
 			children = (
+				4D592CF522C609070034F087 /* cell */,
 				4D90310A22B6221600A184A6 /* ReadyRoomViewController.swift */,
 				4D90310D22B64E4C00A184A6 /* ReadyRoomViewModel.swift */,
 				4D592CF122C200F00034F087 /* ReadyRoomView.swift */,
+				4D592CF822C763650034F087 /* ReadyRoomHeaderView.swift */,
 			);
 			path = ReadyRoom;
 			sourceTree = "<group>";
@@ -463,6 +483,9 @@
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
 								enabled = 1;
+							};
+							com.apple.NetworkExtensions.iOS = {
+								enabled = 0;
 							};
 							com.apple.Push = {
 								enabled = 1;
@@ -700,10 +723,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4D592CFB22C79D610034F087 /* UIColor+Theme.swift in Sources */,
+				4D592CF922C763650034F087 /* ReadyRoomHeaderView.swift in Sources */,
+				4D592CF722C6097A0034F087 /* UserCell.swift in Sources */,
 				4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */,
 				4D592CEE22C10EDF0034F087 /* Date+Extension.swift in Sources */,
 				4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */,
 				4D90310422B3974600A184A6 /* Room.swift in Sources */,
+				4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */,
 				4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */,
 				4D90310822B4FD8E00A184A6 /* User.swift in Sources */,
 				4D90310E22B64E4C00A184A6 /* ReadyRoomViewModel.swift in Sources */,

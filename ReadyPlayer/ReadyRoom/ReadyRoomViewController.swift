@@ -41,12 +41,45 @@ class ReadyRoomViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        guard let viewModel = viewModel else { return }
+        guard let roomId = viewModel.room?.id else { return }
+        navigationController?.navigationBar.prefersLargeTitles = true
+        title = viewModel.room?.name!
         view.backgroundColor = .white
         view.addSubview(mainView)
         mainView.fillSuperView()
-        
-        guard let roomId = viewModel?.room?.id else { return }
-        
+        subscribeToRoom(roomId: roomId)
+        observeDateOfReadyState(roomId)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        retreiveUsersForRoom()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        let ref = viewModel?.ref
+        ref?.removeAllObservers()
+    }
+    
+    func retreiveUsersForRoom() {
+        guard let viewModel = viewModel else { return }
+        let ref = viewModel.ref
+        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { (userArr) in
+            viewModel.userList = []
+            viewModel.userList = userArr
+            viewModel.userList.sort(by: { (userA, userB) -> Bool in
+                return userA.userId! < userB.userId!
+            })
+            DispatchQueue.main.async {
+                self.mainView.tableView.reloadData()
+            }
+            
+        }
+    }
+    
+    func subscribeToRoom(roomId: String) {
         Messaging.messaging().subscribe(toTopic: roomId) { error in
             if error != nil {
                 print("error subscribing to chat room")
@@ -54,27 +87,37 @@ class ReadyRoomViewController: UIViewController {
             }
             print("subscribed to chat room")
         }
-        observeDateOfReadyState(roomId)
-        
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        guard let viewModel = viewModel else { return }
-        let ref = viewModel.ref
-        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { (userArr) in
-            print("retreived all users")
-            viewModel.userList = userArr
-            self.mainView.users.text = userArr[0].userName
-            //update tableview
-        }
     }
     
     func observeDateOfReadyState(_ roomId: String) {
-        Room.observeReadyStateDate(ref: viewModel!.ref, roomId: roomId) { (date, inProgress) in
-            let myDate = date
-            self.viewModel?.inProgress = inProgress
-            self.viewModel?.expires = date
+        guard let viewModel = self.viewModel else { return }
+        
+        Room.observeReadyState(ref: viewModel.ref, roomId: roomId) { (userStateDict) in
+            for user in viewModel.userList {
+                for userState in userStateDict {
+                    let key = userState.key
+                    let id = user.userId!
+                    if (key == id) {
+                        user.state = userState.value
+                    }
+                }
+            }
+            
+            DispatchQueue.main.async {
+                self.mainView.tableView.reloadData()
+            }
+        }
+        
+//        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
+//            viewModel.inProgress = inProgress
+//        }
+        
+        Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { (date) in
+            viewModel.expires = date
+
+            DispatchQueue.main.async {
+                self.mainView.tableView.reloadData()
+            }
         }
     }
     

@@ -20,6 +20,9 @@ class MainViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
         view.dataSource = self
+        view.rowHeight = UIScreen.main.bounds.height / 5.0
+        view.backgroundColor = Theme.Cell.background.darker(by: 2.0)
+        view.separatorStyle = UITableViewCell.SeparatorStyle.none
         return view
     }()
     
@@ -44,12 +47,26 @@ class MainViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let titleLabel = UILabel(frame: .zero)
+        titleLabel.text = "Home"
+        titleLabel.textColor = Theme.Navigation.text
+        titleLabel.sizeToFit()
+        navigationItem.titleView = titleLabel
+        
         // Do any additional setup after loading the view.
         view.addSubview(roomTableView)
-        roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomIdCell")
+        roomTableView.register(UITableViewCell.self, forCellReuseIdentifier: "roomCellId")
         roomTableView.anchorView(top: view.topAnchor, bottom: view.bottomAnchor, leading: view.leadingAnchor, trailing: view.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
         isUserLoggedIn()
         authenticateAnonymously()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("did disappear")
+        let ref = viewModel?.ref
+        ref?.removeAllObservers()
     }
     
     func authenticateAnonymously() {
@@ -73,14 +90,26 @@ class MainViewController: UIViewController {
             }
             
             self.awaitToken.notify(queue: .main, execute: {
-                let values = ["userId" : uid, "userName" : "", "token" : deviceToken]
-                let userRef = ref.child(DatabaseReferenceKeys.users.rawValue)
-                let userIdRef = userRef.child("\(uid!)")
                 
-                userIdRef.updateChildValues(values as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
-                    if err != nil {
-                        print(err!)
-                        return
+                let userIdRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)")
+                let nameRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)/userName")
+
+                nameRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                    // initialises the profile
+                    if (!snapShot.exists()) {
+                        
+                        let initialProfileData = [
+                            "userId" : uid,
+                            "userName" : "Guest",
+                            "token" : deviceToken
+                        ]
+                        
+                        userIdRef.updateChildValues(initialProfileData as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
+                            if err != nil {
+                                print(err!)
+                                return
+                            }
+                        })
                     }
                 })
             })
