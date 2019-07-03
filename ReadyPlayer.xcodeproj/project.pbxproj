@@ -15,6 +15,8 @@
 		4D592CFB22C79D610034F087 /* UIColor+Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFA22C79D610034F087 /* UIColor+Theme.swift */; };
 		4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */; };
 		4D592D0022C8BEE30034F087 /* RoomCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592CFF22C8BEE30034F087 /* RoomCell.swift */; };
+		4D592D0422C9A3010034F087 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592D0322C9A3010034F087 /* ProfileViewController.swift */; };
+		4D592D0622C9FF480034F087 /* UIDevice+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D592D0522C9FF480034F087 /* UIDevice+Extension.swift */; };
 		4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A222B2189B00A184A6 /* AppDelegate.swift */; };
 		4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4D9030A422B2189B00A184A6 /* MainViewController.swift */; };
 		4D9030A822B2189B00A184A6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 4D9030A622B2189B00A184A6 /* Main.storyboard */; };
@@ -116,6 +118,8 @@
 		4D592CFA22C79D610034F087 /* UIColor+Theme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor+Theme.swift"; sourceTree = "<group>"; };
 		4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		4D592CFF22C8BEE30034F087 /* RoomCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoomCell.swift; sourceTree = "<group>"; };
+		4D592D0322C9A3010034F087 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		4D592D0522C9FF480034F087 /* UIDevice+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIDevice+Extension.swift"; sourceTree = "<group>"; };
 		4D90309F22B2189B00A184A6 /* ReadyPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReadyPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		4D9030A222B2189B00A184A6 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		4D9030A422B2189B00A184A6 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -230,6 +234,14 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		4D592D0222C9A1830034F087 /* Profile */ = {
+			isa = PBXGroup;
+			children = (
+				4D592D0322C9A3010034F087 /* ProfileViewController.swift */,
+			);
+			path = Profile;
+			sourceTree = "<group>";
+		};
 		4D90309622B2189B00A184A6 = {
 			isa = PBXGroup;
 			children = (
@@ -260,6 +272,7 @@
 		4D9030A122B2189B00A184A6 /* ReadyPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				4D592D0222C9A1830034F087 /* Profile */,
 				4D592D0122C8D30C0034F087 /* Model */,
 				4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */,
 				4D90310922B621FE00A184A6 /* ReadyRoom */,
@@ -273,6 +286,7 @@
 				4D9030AE22B2189D00A184A6 /* Info.plist */,
 				4D90310522B4E8D700A184A6 /* DatabaseReferenceKeys.swift */,
 				4D592CED22C10EDF0034F087 /* Date+Extension.swift */,
+				4D592D0522C9FF480034F087 /* UIDevice+Extension.swift */,
 				4D592CFC22C7A8050034F087 /* UIColor+Extension.swift */,
 				4D592CFA22C79D610034F087 /* UIColor+Theme.swift */,
 			);
@@ -679,6 +693,7 @@
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/SwiftKeychainWrapper/SwiftKeychainWrapper.framework",
 				"${BUILT_PRODUCTS_DIR}/leveldb-library/leveldb.framework",
 				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
@@ -689,6 +704,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftKeychainWrapper.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/leveldb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
@@ -730,8 +746,10 @@
 				4D592CF922C763650034F087 /* ReadyRoomHeaderView.swift in Sources */,
 				4D592CF722C6097A0034F087 /* UserCell.swift in Sources */,
 				4D9030A522B2189B00A184A6 /* MainViewController.swift in Sources */,
+				4D592D0622C9FF480034F087 /* UIDevice+Extension.swift in Sources */,
 				4D592CEE22C10EDF0034F087 /* Date+Extension.swift in Sources */,
 				4D9030A322B2189B00A184A6 /* AppDelegate.swift in Sources */,
+				4D592D0422C9A3010034F087 /* ProfileViewController.swift in Sources */,
 				4D90310422B3974600A184A6 /* Room.swift in Sources */,
 				4D592CFD22C7A8060034F087 /* UIColor+Extension.swift in Sources */,
 				4D9030FF22B3580200A184A6 /* Extension+UIView.swift in Sources */,

@@ -12,7 +12,9 @@ class UserCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        textLabel?.textColor = .black
+        backgroundColor = Theme.GeneralView.background
+        textLabel?.textColor = Theme.Font.Color
+
     }
     
     required init?(coder aDecoder: NSCoder) {

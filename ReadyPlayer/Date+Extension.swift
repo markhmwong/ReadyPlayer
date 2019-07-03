@@ -11,8 +11,8 @@ import Foundation
 extension Date {
     
     func timeDifference(now: Date) -> TimeInterval {
-        let now = now.timeIntervalSince1970
-        let began = self.timeIntervalSince1970
+        let now = now.timeIntervalSinceReferenceDate
+        let began = self.timeIntervalSinceReferenceDate
         return now - began
     }
     

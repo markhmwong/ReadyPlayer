@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import SwiftKeychainWrapper
 
 class MainViewController: UIViewController {
 
@@ -20,8 +21,8 @@ class MainViewController: UIViewController {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.delegate = self
         view.dataSource = self
-        view.rowHeight = UIScreen.main.bounds.height / 7.0 //same as delegate's method row size
-        view.backgroundColor = Theme.Cell.background.darker(by: 2.0)
+        view.rowHeight = UIScreen.main.bounds.height / RoomCellSize.Size.rawValue //same as delegate's method row size
+        view.backgroundColor = Theme.GeneralView.background.darker(by: 2.0)
         view.separatorStyle = UITableViewCell.SeparatorStyle.none
         return view
     }()
@@ -42,16 +43,16 @@ class MainViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         let rightButton = UIBarButtonItem(title: "Create", style: .plain, target: self, action: #selector(handleCreateRoom))
+        let leftButton = UIBarButtonItem(title: "Settings", style: .plain, target: self, action: #selector(handleProfile))
         self.navigationItem.rightBarButtonItem = rightButton
+        self.navigationItem.leftBarButtonItem = leftButton
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let titleLabel = UILabel(frame: .zero)
-        titleLabel.text = "Home"
-        titleLabel.textColor = Theme.Navigation.text
-        titleLabel.sizeToFit()
+        titleLabel.attributedText = NSAttributedString(string: "HOME", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
         navigationItem.titleView = titleLabel
         
         // Do any additional setup after loading the view.
@@ -100,8 +101,9 @@ class MainViewController: UIViewController {
                         let initialProfileData = [
                             "userId" : uid,
                             "userName" : "Guest",
-                            "token" : deviceToken
-                        ]
+                            "token" : deviceToken,
+                            "created" : Date().timeIntervalSinceReferenceDate
+                            ] as [String : Any]
                         
                         userIdRef.updateChildValues(initialProfileData as [AnyHashable : Any], withCompletionBlock: { (err, ref) in
                             if err != nil {
@@ -109,7 +111,12 @@ class MainViewController: UIViewController {
                                 return
                             }
                         })
+                    } else {
+                        let username = snapShot.value as! String
+                        KeychainWrapper.standard.set(username, forKey: "username")
                     }
+                    
+                    
                 })
             })
         }
@@ -133,9 +140,7 @@ class MainViewController: UIViewController {
     }
     
     func observeRoomStatus(user: String) {
-        
         Room.observeReadyStateByUser(ref: viewModel!.ref, userId: user) { (roomStateList) in
-            
             guard let viewModel = self.viewModel else { return }
             
             for room in viewModel.dataSource {
@@ -162,12 +167,6 @@ class MainViewController: UIViewController {
             Room.createRoom(ref: ref, name: textField.text!, creatorId: currentUser!.uid, completionHandler: {
                 //refresh room list - look for another method to do this. Althought new rooms aren't created frequently this may be okay
                 Room.getRoomsFrom(ref: self.viewModel!.ref, userId: currentUser!.uid) { (roomArr) in
-                    
-                    Room.observeReadyStateByUser(ref: self.viewModel!.ref, userId: currentUser!.uid, completionHandler: { (inProgress) in
-                        //update the room status label for cell
-                        
-                    })
-                    
                     //assign to tableview
                     self.reloadTableWithRoom(data: roomArr)
                 }
@@ -180,6 +179,13 @@ class MainViewController: UIViewController {
         
         alert.addAction(action)
         self.present(alert, animated:true, completion: nil)
+    }
+    
+    @objc func handleProfile() {
+        let vc = ProfileViewController(delegate: self, viewModel: ProfileViewModel())
+        let navVc = UINavigationController(rootViewController: vc)
+        navVc.navigationBar.barTintColor = Theme.Navigation.background
+        self.navigationController?.present(navVc, animated: true, completion: nil)
     }
     
     func reloadTableWithRoom(data: [Room]) {

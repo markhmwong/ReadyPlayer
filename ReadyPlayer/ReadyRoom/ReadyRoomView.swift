@@ -22,8 +22,8 @@ extension ReadyRoomView: UITableViewDelegate, UITableViewDataSource {
         }
         
         guard let viewModel = delegate?.viewModel else { return cell! }
-        cell?.textLabel!.text = viewModel.userList[indexPath.row].userName
-        
+        let nameStr = viewModel.userList[indexPath.row].userName
+        cell?.textLabel?.attributedText = NSAttributedString(string: nameStr?.uppercased() ?? "Unknown Name", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
         if let state = viewModel.userList[indexPath.row].state {
             if (state) {
                 cell?.backgroundColor = .green
@@ -45,7 +45,7 @@ class ReadyRoomView: UIView {
         let button = UIButton()
         button.setTitle("close", for: .normal)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .black
+        button.backgroundColor = .clear
         button.addTarget(self, action: #selector(handleCloseButton), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -53,7 +53,7 @@ class ReadyRoomView: UIView {
     
     lazy var headerView: ReadyRoomHeaderView = {
         guard let delegate = delegate else { return ReadyRoomHeaderView(delegate: nil) }
-       let view = ReadyRoomHeaderView(delegate: delegate)
+        let view = ReadyRoomHeaderView(delegate: delegate)
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
@@ -107,6 +107,8 @@ class ReadyRoomView: UIView {
     
     lazy var tableView: UITableView = {
         let view = UITableView()
+        view.backgroundColor = Theme.GeneralView.background
+        view.separatorStyle = UITableViewCell.SeparatorStyle.none
         view.delegate = self
         view.dataSource = self
         view.translatesAutoresizingMaskIntoConstraints = false

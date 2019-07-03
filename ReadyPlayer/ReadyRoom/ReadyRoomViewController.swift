@@ -43,9 +43,9 @@ class ReadyRoomViewController: UIViewController {
         super.viewDidLoad()
         guard let viewModel = viewModel else { return }
         guard let roomId = viewModel.room?.id else { return }
-        navigationController?.navigationBar.prefersLargeTitles = true
+        navigationController?.navigationBar.prefersLargeTitles = false
+        view.backgroundColor = Theme.GeneralView.background
         title = viewModel.room?.name!
-        view.backgroundColor = .white
         view.addSubview(mainView)
         mainView.fillSuperView()
         subscribeToRoom(roomId: roomId)

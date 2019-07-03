@@ -62,7 +62,7 @@ extension Room {
         
         //create roomsCheck
         let refRoomIdCheck = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(newRoom.key!)")
-        let timeInterval = Date().timeIntervalSince1970
+        let timeInterval = Date().timeIntervalSinceReferenceDate
 
         let roomCheckInitialData = ["numCheck" : 0, "inProgress": false, "checkBeganDate": timeInterval as Double] as [String : Any]
         refRoomIdCheck.updateChildValues(roomCheckInitialData) { (err, ref) in
@@ -128,7 +128,7 @@ extension Room {
         var data: [String: Any] = [:]
         
         if (state == true) {
-            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSince1970, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSince1970] as [String : Any]
+            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate] as [String : Any]
         } else {
             data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
         }
@@ -161,7 +161,7 @@ extension Room {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/expires")
         roomCheckRef.observe(.value) { (snapshot) in
             let date = snapshot.value as? TimeInterval
-            completionHandler(Date(timeIntervalSince1970: date ?? 0))
+            completionHandler(Date(timeIntervalSinceReferenceDate: date ?? 0))
         }
     }
     
@@ -169,7 +169,9 @@ extension Room {
     static func observeReadyStateByUser(ref: DatabaseReference, userId: String, completionHandler: @escaping ([String : Bool]) -> Void) {
         let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
         userRoomsRef.observe(.value) { (snapShot) in
-            let inProgress = snapShot.value as! [String : Bool]
+            guard let inProgress = snapShot.value as? [String : Bool] else {
+                return
+            }
             completionHandler(inProgress)
         }
     }

@@ -12,6 +12,8 @@ target 'ReadyPlayer' do
   pod 'Firebase/Database'
   pod 'Firebase/Messaging'
 
+  pod 'SwiftKeychainWrapper'
+  
   target 'ReadyPlayerTests' do
     inherit! :search_paths
     # Pods for testing

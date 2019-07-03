@@ -20,7 +20,7 @@ extension MainViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return UIScreen.main.bounds.height / 7.0
+        return UIScreen.main.bounds.height / RoomCellSize.Size.rawValue
     }
 }
 

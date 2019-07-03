@@ -8,13 +8,18 @@
 
 import UIKit
 
+enum RoomCellSize: CGFloat {
+    case Size = 8.0
+}
+
 class RoomCell: UITableViewCell {
     
     var room: Room? {
         didSet {
             //setup cell
-            roomName.attributedText = NSAttributedString(string: "\(room?.name ?? "My Interesting Room Name")", attributes: [NSAttributedString.Key.kern : 2.0, NSAttributedString.Key.foregroundColor : UIColor(red:0.91, green:0.53, blue:0.04, alpha:1.0)])
+            let roomStr = "\(room?.name ?? "My Interesting Room Name")"
             
+            roomName.attributedText = NSAttributedString(string: roomStr.uppercased(), attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.h4).value)])
             updateRoomStatus(status: room?.inProgress)
         }
     }
@@ -58,20 +63,23 @@ class RoomCell: UITableViewCell {
     func updateRoomStatus(status: Bool?) {
         
         var statusStr = ""
-        
+        var textColor: UIColor = .white
         guard let status = status else {
             statusStr = "Unknown"
-            roomStatus.attributedText = NSAttributedString(string: statusStr, attributes: [NSAttributedString.Key.kern : 2.0, NSAttributedString.Key.foregroundColor : UIColor(red:0.91, green:0.53, blue:0.04, alpha:1.0)])
+            roomStatus.attributedText = NSAttributedString(string: statusStr.uppercased(), attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
             return
         }
         
+        print("To do - label color")
         if (status) {
             statusStr = "In Progress"
+            textColor = Theme.Cell.inProgress
         } else {
             statusStr = "Idle"
+            textColor = Theme.Cell.idle
         }
         
-        roomStatus.attributedText = NSAttributedString(string: statusStr, attributes: [NSAttributedString.Key.kern : 2.0, NSAttributedString.Key.foregroundColor : UIColor(red:0.91, green:0.53, blue:0.04, alpha:1.0)])
+        roomStatus.attributedText = NSAttributedString(string: statusStr.uppercased(), attributes: [NSAttributedString.Key.foregroundColor : textColor, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
 
     }
     
