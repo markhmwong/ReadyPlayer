@@ -31,11 +31,10 @@ extension MainViewController: UITableViewDelegate {
         let roomObj = dataSource[indexPath.row]
         let readyRoomViewModel = ReadyRoomViewModel(delegate: nil, room: roomObj)
         let viewController = ReadyRoomViewController(viewModel: readyRoomViewModel)
-        readyRoomViewModel.delegate = viewController
-
+        let navVc = UINavigationController(rootViewController: viewController)
+        navVc.navigationBar.barTintColor = Theme.Navigation.background
         tableView.deselectRow(at: indexPath, animated: true)
-        self.navigationController?.present(viewController, animated: true, completion: nil)
-        
+        self.navigationController?.present(navVc, animated: true, completion: nil)
     }
     
 }

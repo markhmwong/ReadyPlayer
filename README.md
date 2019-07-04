@@ -7,7 +7,8 @@ A ready check application that allows anonymous sign in.
 ### important - relative time. time between timezones
 ### custom message for room to give it more meaning when a ready state has begun
 ### UI for room view
-### update name
+### background mode (ray wenderlich)
+
 
 anonymous authentication <done>
 Group "chat room" <done>

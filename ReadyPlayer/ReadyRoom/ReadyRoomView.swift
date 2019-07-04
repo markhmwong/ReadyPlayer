@@ -24,11 +24,20 @@ extension ReadyRoomView: UITableViewDelegate, UITableViewDataSource {
         guard let viewModel = delegate?.viewModel else { return cell! }
         let nameStr = viewModel.userList[indexPath.row].userName
         cell?.textLabel?.attributedText = NSAttributedString(string: nameStr?.uppercased() ?? "Unknown Name", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+        
+        let userState = UILabel()
+        userState.backgroundColor = .red
+        userState.attributedText = NSAttributedString(string: "STATUS", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+        userState.translatesAutoresizingMaskIntoConstraints = false
+        userState.textAlignment = .center
+        cell?.contentView.addSubview(userState)
+        userState.anchorView(top: cell?.topAnchor, bottom: cell?.bottomAnchor, leading: cell?.centerXAnchor, trailing: cell?.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+        
         if let state = viewModel.userList[indexPath.row].state {
             if (state) {
                 cell?.backgroundColor = .green
             } else {
-                cell?.backgroundColor = .white
+                cell?.backgroundColor = Theme.Cell.background
             }
         }
         
@@ -39,17 +48,7 @@ extension ReadyRoomView: UITableViewDelegate, UITableViewDataSource {
 
 class ReadyRoomView: UIView {
     
-    var delegate: ReadyRoomViewController?
-    
-    lazy var closeButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("close", for: .normal)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .clear
-        button.addTarget(self, action: #selector(handleCloseButton), for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
+    weak var delegate: ReadyRoomViewController?
     
     lazy var headerView: ReadyRoomHeaderView = {
         guard let delegate = delegate else { return ReadyRoomHeaderView(delegate: nil) }
@@ -81,7 +80,7 @@ class ReadyRoomView: UIView {
     
     lazy var initiateCheckButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Start", for: .normal)
+        button.setTitle("START", for: .normal)
         button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(handleInitiateButton), for: .touchUpInside)
@@ -97,7 +96,7 @@ class ReadyRoomView: UIView {
     
     lazy var readyButton: UIButton = {
         let button = UIButton()
-        button.setTitle("Ready", for: .normal)
+        button.setTitle("READY", for: .normal)
         button.isHidden = true
         button.setTitleColor(.black, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -147,54 +146,23 @@ class ReadyRoomView: UIView {
     }
     
     func setupView() {
-        let room = delegate?.viewModel?.room
+        guard let delegate = delegate else { return }
+
+        let room = delegate.viewModel?.room
         roomTitle.text = "\(room?.name ?? "unknown")"
         roomTitle.sizeToFit()
         
         status.text = "status"
         status.sizeToFit()
         
-        guard let delegate = delegate else { return }
         headerView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableHeaderView = headerView
         headerView.setNeedsLayout()
         headerView.layoutIfNeeded()
         
-//        addSubview(readyButton)
-//        addSubview(users)
-//        addSubview(status)
-//        addSubview(time)
-//        addSubview(roomTitle)
-//        addSubview(initiateCheckButton)
-        
         addSubview(tableView)
-        addSubview(closeButton)
-
         
         tableView.register(UserCell.self, forCellReuseIdentifier: "userCellId")
         tableView.fillSuperView()
-        closeButton.anchorView(top: safeAreaLayoutGuide.topAnchor, bottom: nil, leading: nil, trailing: trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: CGSize(width: 50.0, height: 30.0))
-//        users.anchorView(top: status.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-//
-//        status.anchorView(top: roomTitle.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-//        time.anchorView(top: nil, bottom: initiateCheckButton.topAnchor, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-//        roomTitle.anchorView(top: safeAreaLayoutGuide.topAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-//        initiateCheckButton.anchorView(top: nil, bottom: nil, leading: nil, trailing: nil, centerY: centerYAnchor, centerX: centerXAnchor, padding: .zero, size: CGSize(width: 60.0, height: 30.0))
-//        readyButton.anchorView(top: users.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: CGSize(width: 60.0, height: 30.0))
-    }
-    
-    override func safeAreaInsetsDidChange() {
-        super.safeAreaInsetsDidChange()
-        
-
-    }
-    
-    func updateTimeLabel(timeStr: String) {
-        time.text = timeStr
-    }
-    
-    @objc func handleCloseButton() {
-        print("handle close button")
-        delegate?.dismiss(animated: true, completion: nil)
     }
 }

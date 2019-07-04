@@ -93,8 +93,8 @@ class MainViewController: UIViewController {
                 
                 let userIdRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)")
                 let nameRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)/userName")
-
-                nameRef.observeSingleEvent(of: .value, with: { (snapShot) in
+                
+                userIdRef.observeSingleEvent(of: .value, with: { (snapShot) in
                     // initialises the profile
                     if (!snapShot.exists()) {
                         
@@ -112,12 +112,16 @@ class MainViewController: UIViewController {
                             }
                         })
                     } else {
-                        let username = snapShot.value as! String
-                        KeychainWrapper.standard.set(username, forKey: "username")
+                        let dict = snapShot.value as! [String : Any]
+                        let userNameStr = dict["userName"] as! String
+                        let userIdStr = dict["userId"] as! String
+                        let tokenStr = dict["token"] as! String
+                        KeychainWrapper.standard.set(userNameStr, forKey: "userName")
+                        KeychainWrapper.standard.set(userIdStr, forKey: "userId")
+                        KeychainWrapper.standard.set(tokenStr, forKey: "token")
                     }
-                    
-                    
                 })
+                
             })
         }
     }
@@ -180,6 +184,7 @@ class MainViewController: UIViewController {
         alert.addAction(action)
         self.present(alert, animated:true, completion: nil)
     }
+    
     
     @objc func handleProfile() {
         let vc = ProfileViewController(delegate: self, viewModel: ProfileViewModel())

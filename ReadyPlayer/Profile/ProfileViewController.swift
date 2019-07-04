@@ -8,26 +8,30 @@
 
 import UIKit
 import SwiftKeychainWrapper
+import Firebase
 
 class ProfileViewModel {
+    let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
+
     let cellId = "settingsCellId"
     
     let dataSource = [
-        ["Username"],
+        ["Username", "UserId"],
     ]
     
     enum Sections: String, CaseIterable {
         case User = "User"
     }
     
-    enum UserSettings: String, CaseIterable {
+    enum UserSettings: Int, CaseIterable {
         case Username
+        case UserId
     }
 }
 
 class ProfileMainView: UIView {
 
-    var delegate: ProfileViewController?
+    weak var delegate: ProfileViewController?
     
     lazy var tableView: UITableView = {
         let view = UITableView()
@@ -62,6 +66,20 @@ class ProfileMainView: UIView {
 }
 
 extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        return true
+    }
+    func textFieldDidEndEditing(_ textField: UITextField) {
+//        print("did end")
+        guard let viewModel = delegate?.viewModel else { return }
+        // update firebase
+        User.updateUserName(ref: viewModel.ref, userId: User.getCurrentLoggedInUserKey(), userName: textField.text ?? "")
+
+        //update keychain
+        KeychainWrapper.standard.set(textField.text ?? "", forKey: "userName")
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         let sect = ProfileViewModel.Sections.allCases[section]
@@ -100,14 +118,32 @@ extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFie
         cell.backgroundColor = Theme.Cell.background
         cell.textLabel?.attributedText = NSAttributedString(string: delegate?.viewModel?.dataSource[indexPath.section][indexPath.row].uppercased() ?? "Unknown Setting", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
         
-        let tf = UITextField(frame: .zero)
-        tf.keyboardAppearance = .dark
-        tf.translatesAutoresizingMaskIntoConstraints = false
-        tf.delegate = self
-        let username = KeychainWrapper.standard.string(forKey: "username")?.uppercased()
-        tf.attributedText = NSAttributedString(string: username ?? "unknown username", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
-        cell.contentView.addSubview(tf)
-        tf.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+        if (indexPath.section == 0) {
+            if let row = ProfileViewModel.UserSettings.init(rawValue: indexPath.row) {
+                switch row {
+                case ProfileViewModel.UserSettings.Username:
+                    let tf = UITextField(frame: .zero)
+                    tf.keyboardAppearance = .dark
+                    tf.translatesAutoresizingMaskIntoConstraints = false
+                    tf.delegate = self
+                    
+                    let username = KeychainWrapper.standard.string(forKey: "userName")?.uppercased()
+                    
+                    tf.attributedText = NSAttributedString(string: username ?? "unknown username", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
+                    cell.contentView.addSubview(tf)
+                    tf.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+                case ProfileViewModel.UserSettings.UserId:
+                    let label = UITextField()
+                    let userIdStr = KeychainWrapper.standard.string(forKey: "userId")
+                    label.translatesAutoresizingMaskIntoConstraints = false
+                    label.attributedText = NSAttributedString(string: userIdStr ?? "unknown userid", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
+                    cell.contentView.addSubview(label)
+                    label.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+                }
+            }
+        }
+        
+        
         return cell
     }
 }
@@ -159,5 +195,9 @@ class ProfileViewController: UIViewController {
     
     @objc func handleClose() {
         navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    deinit {
+        print("deinit profile view")
     }
 }

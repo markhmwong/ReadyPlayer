@@ -22,6 +22,7 @@ class ReadyRoomViewController: UIViewController {
     init(viewModel: ReadyRoomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
+        self.viewModel?.delegate = self
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -37,6 +38,8 @@ class ReadyRoomViewController: UIViewController {
         
         let rightButton = UIBarButtonItem(title: "Add User", style: .plain, target: self, action: #selector(handleAddUser))
         self.navigationItem.rightBarButtonItem = rightButton
+        let leftButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(handleClose))
+        navigationItem.leftBarButtonItem = leftButton
     }
     
     override func viewDidLoad() {
@@ -108,9 +111,9 @@ class ReadyRoomViewController: UIViewController {
             }
         }
         
-//        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
-//            viewModel.inProgress = inProgress
-//        }
+        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
+            viewModel.inProgress = inProgress
+        }
         
         Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { (date) in
             viewModel.expires = date
@@ -140,6 +143,14 @@ class ReadyRoomViewController: UIViewController {
         
         alert.addAction(action)
         self.present(alert, animated:true, completion: nil)
+    }
+    
+    @objc func handleClose() {
+        navigationController?.dismiss(animated: true, completion: nil)
+    }
+    
+    deinit {
+        print("deinit ready room")
     }
 }
 

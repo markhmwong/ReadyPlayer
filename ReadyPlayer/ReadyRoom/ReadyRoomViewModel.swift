@@ -9,15 +9,16 @@
 import Firebase
 
 class ReadyRoomViewModel {
+    
+    weak var delegate: ReadyRoomViewController?
+    
     let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
     
     var timerLimit: Double = 8.0
     
     var timer: Timer?
     
-    let room: Room?
-    
-    var delegate: ReadyRoomViewController?
+    let room: Room?    
     
     var expires: Date?
     
@@ -32,11 +33,11 @@ class ReadyRoomViewModel {
             
             if inProgress ?? false {
                 delegate?.mainView.status.text = "true"
-                delegate?.mainView.readyButton.isHidden = false
+                delegate?.mainView.headerView.readyButton.isHidden = false
                 startTimer()
             } else {
                 delegate?.mainView.status.text = "false"
-                delegate?.mainView.readyButton.isHidden = true
+                delegate?.mainView.headerView.readyButton.isHidden = true
             }
         }
     }
@@ -91,7 +92,7 @@ class ReadyRoomViewModel {
     
     func updateTimeLabel() {
         guard let delegate = delegate else { return }
-        delegate.mainView.updateTimeLabel(timeStr: "\(timeRemaining)")
+        delegate.mainView.headerView.updateTimeLabel(timeStr: "\(timeRemaining)")
     }
 }
 

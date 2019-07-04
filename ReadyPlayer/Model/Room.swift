@@ -38,7 +38,7 @@ extension Room {
         let refRooms = ref.child(DatabaseReferenceKeys.rooms.rawValue)
         let newRoom = refRooms.childByAutoId()
         
-        let data = ["id" : newRoom.key, "name" : name, "inviteLink" : newRoom.key, "creator" : creatorId, "inProgress" : false] as [String : Any]
+        let data = ["id" : newRoom.key!, "name" : name, "inviteLink" : newRoom.key!, "creator" : creatorId, "inProgress" : false] as [String : Any]
         
         newRoom.updateChildValues(data as [AnyHashable : Any]) { (err, ref) in
             if err != nil {
@@ -51,7 +51,8 @@ extension Room {
         
         let userId = Auth.auth().currentUser?.uid
         let roomUsers = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId!)")
-        let roomData = [newRoom.key : 1]
+        let initiateRoomState = false
+        let roomData = [newRoom.key : initiateRoomState]
         
         roomUsers.updateChildValues(roomData) { (err, ref) in
             if (err != nil) {
@@ -126,18 +127,31 @@ extension Room {
     static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double) -> Void {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
         var data: [String: Any] = [:]
+        var userRoomsData: [String: Any] = ["\(roomId)" : true]
         
         if (state == true) {
             data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate] as [String : Any]
+            userRoomsData = ["\(roomId)" : state]
         } else {
             data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
+            userRoomsData = ["\(roomId)" : state]
         }
         
-        roomCheckRef.updateChildValues(data) { (err, ref) in
+        roomCheckRef.updateChildValues(data) { (err, roomCheckRef) in
             if (err != nil) {
                 print("Error updating ready state")
                 return
             }
+            
+            let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
+            userRoomsRef.updateChildValues(userRoomsData) { (err, ref) in
+                if (err != nil) {
+                    print("Error updating ready state")
+                    return
+                }
+                
+            }
+            
         }
     }
     
