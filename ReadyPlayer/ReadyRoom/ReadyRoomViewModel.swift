@@ -52,8 +52,7 @@ class ReadyRoomViewModel {
         }
     }
     
-    init(delegate: ReadyRoomViewController?, room: Room) {
-        self.delegate = delegate
+    init(room: Room) {
         self.room = room
     }
     

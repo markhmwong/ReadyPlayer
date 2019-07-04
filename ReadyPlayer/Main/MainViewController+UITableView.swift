@@ -29,7 +29,7 @@ extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let dataSource = viewModel?.dataSource else { return }
         let roomObj = dataSource[indexPath.row]
-        let readyRoomViewModel = ReadyRoomViewModel(delegate: nil, room: roomObj)
+        let readyRoomViewModel = ReadyRoomViewModel(room: roomObj)
         let viewController = ReadyRoomViewController(viewModel: readyRoomViewModel)
         let navVc = UINavigationController(rootViewController: viewController)
         navVc.navigationBar.barTintColor = Theme.Navigation.background

@@ -22,7 +22,7 @@ class ReadyRoomViewController: UIViewController {
     init(viewModel: ReadyRoomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        self.viewModel?.delegate = self
+//        self.viewModel?.delegate = self
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -69,7 +69,7 @@ class ReadyRoomViewController: UIViewController {
     func retreiveUsersForRoom() {
         guard let viewModel = viewModel else { return }
         let ref = viewModel.ref
-        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { (userArr) in
+        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { [unowned self] (userArr) in
             viewModel.userList = []
             viewModel.userList = userArr
             viewModel.userList.sort(by: { (userA, userB) -> Bool in
@@ -95,7 +95,7 @@ class ReadyRoomViewController: UIViewController {
     func observeDateOfReadyState(_ roomId: String) {
         guard let viewModel = self.viewModel else { return }
         
-        Room.observeReadyState(ref: viewModel.ref, roomId: roomId) { (userStateDict) in
+        Room.observeReadyState(ref: viewModel.ref, roomId: roomId) { [unowned self] (userStateDict) in
             for user in viewModel.userList {
                 for userState in userStateDict {
                     let key = userState.key
@@ -111,11 +111,11 @@ class ReadyRoomViewController: UIViewController {
             }
         }
         
-        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
+        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) {  (inProgress) in
             viewModel.inProgress = inProgress
         }
         
-        Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { (date) in
+        Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { [unowned self] (date) in
             viewModel.expires = date
 
             DispatchQueue.main.async {
@@ -133,7 +133,6 @@ class ReadyRoomViewController: UIViewController {
             let textField = alert.textFields![0] as UITextField
             let ref = self.viewModel!.ref
             let currentUser = Auth.auth().currentUser
-            
             Room.addNewUser(ref: ref, userId: textField.text!, roomId: roomId)
         }
         
