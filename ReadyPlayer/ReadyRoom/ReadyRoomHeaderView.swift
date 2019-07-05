@@ -85,9 +85,8 @@ class ReadyRoomHeaderView: UIView {
     }
     
     @objc func handleInitiateButton() {
-
         guard let vm = delegate?.viewModel else { return }
-        let room = vm.room
+        
         
         //initiate countdown
         vm.localBegins = Date()
@@ -95,6 +94,7 @@ class ReadyRoomHeaderView: UIView {
         vm.startTimer()
         
         // cloud functions sends notifications to users in chat room
+        let room = vm.room
         Room.readyStateUpdate(ref: vm.ref, userId: User.getCurrentLoggedInUserKey(), roomId: room?.id ?? "", state: true, timeLimit: vm.timerLimit)
     }
     

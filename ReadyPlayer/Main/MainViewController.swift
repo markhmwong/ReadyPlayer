@@ -147,7 +147,7 @@ class MainViewController: UIViewController {
         Room.observeReadyStateByUser(ref: viewModel!.ref, userId: user) { (roomStateList) in
             guard let viewModel = self.viewModel else { return }
             
-            for room in viewModel.dataSource {
+            for room in viewModel.roomDataSource {
                 for state in roomStateList {
                     if (room.id == state.key) {
                         room.inProgress = state.value
@@ -194,8 +194,8 @@ class MainViewController: UIViewController {
     }
     
     func reloadTableWithRoom(data: [Room]) {
-        self.viewModel?.dataSource = []
-        self.viewModel?.dataSource = data
+        self.viewModel?.roomDataSource = []
+        self.viewModel?.roomDataSource = data
         DispatchQueue.main.async {
             self.roomTableView.reloadData()
         }

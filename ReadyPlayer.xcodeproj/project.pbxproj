@@ -272,9 +272,9 @@
 		4D9030A122B2189B00A184A6 /* ReadyPlayer */ = {
 			isa = PBXGroup;
 			children = (
+				4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */,
 				4D592D0222C9A1830034F087 /* Profile */,
 				4D592D0122C8D30C0034F087 /* Model */,
-				4D56EC8E22BCA31B00073A5F /* ReadyPlayer.entitlements */,
 				4D90310922B621FE00A184A6 /* ReadyRoom */,
 				4D9030F922B34D4100A184A6 /* Main */,
 				4D90310022B35AEB00A184A6 /* GoogleService-Info.plist */,

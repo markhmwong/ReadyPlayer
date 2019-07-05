@@ -71,7 +71,6 @@ extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFie
         return true
     }
     func textFieldDidEndEditing(_ textField: UITextField) {
-//        print("did end")
         guard let viewModel = delegate?.viewModel else { return }
         // update firebase
         User.updateUserName(ref: viewModel.ref, userId: User.getCurrentLoggedInUserKey(), userName: textField.text ?? "")

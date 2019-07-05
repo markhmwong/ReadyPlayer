@@ -12,6 +12,8 @@ class ReadyRoomViewModel {
     
     weak var delegate: ReadyRoomViewController?
     
+    let cellId = "userCellId"
+    
     let ref = Database.database().reference(fromURL: "https://readyplayer-76fee.firebaseio.com/")
     
     var timerLimit: Double = 8.0
@@ -22,7 +24,7 @@ class ReadyRoomViewModel {
     
     var expires: Date?
     
-    var userList: [User] = []
+    var userDataSource: [User] = []
     
     var didInitiate: Bool?
     
@@ -32,11 +34,9 @@ class ReadyRoomViewModel {
         didSet {
             
             if inProgress ?? false {
-                delegate?.mainView.status.text = "true"
                 delegate?.mainView.headerView.readyButton.isHidden = false
                 startTimer()
             } else {
-                delegate?.mainView.status.text = "false"
                 delegate?.mainView.headerView.readyButton.isHidden = true
             }
         }
@@ -81,7 +81,7 @@ class ReadyRoomViewModel {
         }
         
         if (time <= 0) {
-            // reset room
+            // count is complete, reset room
             Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0)
             stopTimer()
         }

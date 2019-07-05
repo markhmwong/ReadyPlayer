@@ -22,7 +22,7 @@ class ReadyRoomViewController: UIViewController {
     init(viewModel: ReadyRoomViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-//        self.viewModel?.delegate = self
+        self.viewModel?.delegate = self
     }
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -35,29 +35,29 @@ class ReadyRoomViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        let rightButton = UIBarButtonItem(title: "Add User", style: .plain, target: self, action: #selector(handleAddUser))
-        self.navigationItem.rightBarButtonItem = rightButton
-        let leftButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(handleClose))
-        navigationItem.leftBarButtonItem = leftButton
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        guard let viewModel = viewModel else { return }
-        guard let roomId = viewModel.room?.id else { return }
-        navigationController?.navigationBar.prefersLargeTitles = false
+        let rightButton = UIBarButtonItem(title: "Add User", style: .plain, target: self, action: #selector(handleAddUser))
+        self.navigationItem.rightBarButtonItem = rightButton
+        let leftButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(handleClose))
+        navigationItem.leftBarButtonItem = leftButton
+        
+        let titleLabel = UILabel(frame: .zero)
+        titleLabel.attributedText = NSAttributedString(string: "SETTINGS", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
+        navigationItem.titleView = titleLabel
         view.backgroundColor = Theme.GeneralView.background
-        title = viewModel.room?.name!
         view.addSubview(mainView)
         mainView.fillSuperView()
-        subscribeToRoom(roomId: roomId)
-        observeDateOfReadyState(roomId)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        guard let roomId = viewModel?.room?.id else { return }
+
         retreiveUsersForRoom()
+        subscribeToRoom(roomId: roomId)
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -66,19 +66,25 @@ class ReadyRoomViewController: UIViewController {
         ref?.removeAllObservers()
     }
     
+    /// Grab users in room then apply an observer for their ready state
     func retreiveUsersForRoom() {
         guard let viewModel = viewModel else { return }
+        guard let roomId = viewModel.room?.id else { return }
         let ref = viewModel.ref
-        Room.getUsersInRoom(ref: ref, roomId: (viewModel.room?.id!)!) { [unowned self] (userArr) in
-            viewModel.userList = []
-            viewModel.userList = userArr
-            viewModel.userList.sort(by: { (userA, userB) -> Bool in
+        
+        // unowned self
+        Room.getUsersInRoom(ref: ref, roomId: roomId) { (userArr) in
+            viewModel.userDataSource = []
+            viewModel.userDataSource = userArr
+            viewModel.userDataSource.sort(by: { (userA, userB) -> Bool in
                 return userA.userId! < userB.userId!
             })
             DispatchQueue.main.async {
                 self.mainView.tableView.reloadData()
             }
             
+            self.observeDateOfReadyState(roomId)
+
         }
     }
     
@@ -95,8 +101,12 @@ class ReadyRoomViewController: UIViewController {
     func observeDateOfReadyState(_ roomId: String) {
         guard let viewModel = self.viewModel else { return }
         
-        Room.observeReadyState(ref: viewModel.ref, roomId: roomId) { [unowned self] (userStateDict) in
-            for user in viewModel.userList {
+        // unowned self
+        Room.observeReadyState(ref: viewModel.ref, roomId: roomId) { (userStateDict) in
+            // users are empty
+            
+            // match users to their state
+            for user in viewModel.userDataSource {
                 for userState in userStateDict {
                     let key = userState.key
                     let id = user.userId!
@@ -106,21 +116,22 @@ class ReadyRoomViewController: UIViewController {
                 }
             }
             
+//            let visibleCells = self.mainView.tableView.visibleCells as! [UserCell]
+//
+//            for cell in visibleCells {
+//                cell.updateStatusLabel(statusStr: <#T##String#>)
+//            }
             DispatchQueue.main.async {
                 self.mainView.tableView.reloadData()
             }
         }
         
-        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) {  (inProgress) in
+        Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
             viewModel.inProgress = inProgress
         }
-        
-        Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { [unowned self] (date) in
-            viewModel.expires = date
 
-            DispatchQueue.main.async {
-                self.mainView.tableView.reloadData()
-            }
+        Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { (date) in
+            viewModel.expires = date
         }
     }
     

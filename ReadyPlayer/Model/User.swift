@@ -27,7 +27,6 @@ extension User {
     
     static func updateUserName(ref: DatabaseReference, userId: String, userName: String) -> Void {
         let userRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(User.getCurrentLoggedInUserKey())")
-        print(userRef)
         userRef.updateChildValues(["userName" : userName]) { (err, ref) in
             if (err != nil) {
                 print("Error updating username")

@@ -10,12 +10,12 @@ import UIKit
 
 extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return viewModel?.dataSource.count ?? 0
+        return viewModel?.roomDataSource.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "roomCellId", for: indexPath) as! RoomCell
-        cell.room = viewModel?.dataSource[indexPath.row]
+        cell.room = viewModel?.roomDataSource[indexPath.row]
         return cell
     }
     
@@ -27,7 +27,7 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let dataSource = viewModel?.dataSource else { return }
+        guard let dataSource = viewModel?.roomDataSource else { return }
         let roomObj = dataSource[indexPath.row]
         let readyRoomViewModel = ReadyRoomViewModel(room: roomObj)
         let viewController = ReadyRoomViewController(viewModel: readyRoomViewModel)

@@ -130,14 +130,16 @@ extension Room {
         var userRoomsData: [String: Any] = ["\(roomId)" : true]
         
         if (state == true) {
-            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate] as [String : Any]
+            // initiate check
+            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate, "userState" : [userId : true]] as [String : Any]
             userRoomsData = ["\(roomId)" : state]
         } else {
-            data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
+            // reset check
+            data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0, "numcheck" : 0] as [String : Any]
             userRoomsData = ["\(roomId)" : state]
         }
         
-        roomCheckRef.updateChildValues(data) { (err, roomCheckRef) in
+        roomCheckRef.updateChildValues(data) { (err, _) in
             if (err != nil) {
                 print("Error updating ready state")
                 return
@@ -149,9 +151,7 @@ extension Room {
                     print("Error updating ready state")
                     return
                 }
-                
             }
-            
         }
     }
     
@@ -159,7 +159,7 @@ extension Room {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)/userState")
         roomCheckRef.observe(.value) { (snapshot) in
             let userStateDict = snapshot.value as? [String : Bool]
-            completionHandler(userStateDict ?? [:])
+            completionHandler(userStateDict ?? ["Failed" : false])
         }
     }
     

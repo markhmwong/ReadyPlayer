@@ -45,7 +45,7 @@ class RoomCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = Theme.Cell.background
-        setupCell()
+        self.setupCell()
     }
     
     required init?(coder aDecoder: NSCoder) {
