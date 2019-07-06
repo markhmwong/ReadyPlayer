@@ -10,7 +10,7 @@ import Foundation
 import Firebase
 
 class Room: NSObject {
-    
+    // Should match the keys under /rooms
     var id: String?
     
     var creator: String?
@@ -21,6 +21,8 @@ class Room: NSObject {
     
     var inProgress: Bool?
     
+    var title: String?
+    
     static var awaitRoom = DispatchGroup()
     
     init(dictionary: [String: Any]) {
@@ -29,16 +31,17 @@ class Room: NSObject {
         self.inviteLink = dictionary["inviteLink"] as? String
         self.name = dictionary["name"] as? String
         self.inProgress = dictionary["inProgress"] as? Bool
+        self.title = dictionary["title"] as? String
     }
 }
 
 extension Room {
     
-    static func createRoom(ref: DatabaseReference, name: String, creatorId: String, completionHandler: @escaping () -> Void) -> Void {
+    static func createRoom(ref: DatabaseReference, name: String, message: String, creatorId: String, completionHandler: @escaping () -> Void) -> Void {
         let refRooms = ref.child(DatabaseReferenceKeys.rooms.rawValue)
         let newRoom = refRooms.childByAutoId()
         
-        let data = ["id" : newRoom.key!, "name" : name, "inviteLink" : newRoom.key!, "creator" : creatorId, "inProgress" : false] as [String : Any]
+        let data = ["id" : newRoom.key!, "name" : name, "message" : message, "inviteLink" : newRoom.key!, "creator" : creatorId, "inProgress" : false] as [String : Any]
         
         newRoom.updateChildValues(data as [AnyHashable : Any]) { (err, ref) in
             if err != nil {
@@ -124,18 +127,18 @@ extension Room {
     }
     
     // Updates the roomsCheck node
-    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double) -> Void {
+    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double, userState: [String : Bool]) -> Void {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
         var data: [String: Any] = [:]
         var userRoomsData: [String: Any] = ["\(roomId)" : true]
         
         if (state == true) {
-            // initiate check
-            data = ["inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate, "userState" : [userId : true]] as [String : Any]
+            // initiate check - room should begin with default values
+            data = ["numCheck" : 0, "inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate, "userState" : userState] as [String : Any]
             userRoomsData = ["\(roomId)" : state]
         } else {
             // reset check
-            data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0, "numcheck" : 0] as [String : Any]
+            data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
             userRoomsData = ["\(roomId)" : state]
         }
         
@@ -250,7 +253,17 @@ extension Room {
             awaitUsers.notify(queue: .main, execute: {
                 completionHandler(userArr)
             })
-            
+        }
+    }
+    
+    static func updateMessage(ref: DatabaseReference, roomId: String, message: String) {
+        let roomRef = ref.child("\(DatabaseReferenceKeys.rooms.rawValue)/\(roomId)")
+        let data = ["message" : message]
+        roomRef.updateChildValues(data) { (err, _) in
+            if (err != nil) {
+                print("Error updating title of room: \(err)")
+                return
+            }
         }
     }
 }

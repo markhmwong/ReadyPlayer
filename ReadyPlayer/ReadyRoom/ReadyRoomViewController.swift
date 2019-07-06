@@ -39,14 +39,11 @@ class ReadyRoomViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        let rightButton = UIBarButtonItem(title: "Add User", style: .plain, target: self, action: #selector(handleAddUser))
-        self.navigationItem.rightBarButtonItem = rightButton
-        let leftButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(handleClose))
-        navigationItem.leftBarButtonItem = leftButton
+        setupNavBar()
         
-        let titleLabel = UILabel(frame: .zero)
-        titleLabel.attributedText = NSAttributedString(string: "SETTINGS", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
-        navigationItem.titleView = titleLabel
+//        let titleLabel = UILabel(frame: .zero)
+//        titleLabel.attributedText = NSAttributedString(string: "", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
+//        navigationItem.titleView = titleLabel
         view.backgroundColor = Theme.GeneralView.background
         view.addSubview(mainView)
         mainView.fillSuperView()
@@ -55,7 +52,6 @@ class ReadyRoomViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         guard let roomId = viewModel?.room?.id else { return }
-
         retreiveUsersForRoom()
         subscribeToRoom(roomId: roomId)
     }
@@ -64,6 +60,14 @@ class ReadyRoomViewController: UIViewController {
         super.viewDidDisappear(animated)
         let ref = viewModel?.ref
         ref?.removeAllObservers()
+    }
+    
+    func setupNavBar() {
+        let rightButton = UIBarButtonItem(title: "Options", style: .plain, target: self, action: #selector(handleRoomOptions))
+        rightButton.setTitleTextAttributes([NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!], for: .normal)
+        self.navigationItem.rightBarButtonItem = rightButton
+        let leftButton = UIBarButtonItem(title: "Close", style: .plain, target: self, action: #selector(handleClose))
+        navigationItem.leftBarButtonItem = leftButton
     }
     
     /// Grab users in room then apply an observer for their ready state
@@ -84,7 +88,6 @@ class ReadyRoomViewController: UIViewController {
             }
             
             self.observeDateOfReadyState(roomId)
-
         }
     }
     
@@ -115,17 +118,10 @@ class ReadyRoomViewController: UIViewController {
                     }
                 }
             }
-            
-//            let visibleCells = self.mainView.tableView.visibleCells as! [UserCell]
-//
-//            for cell in visibleCells {
-//                cell.updateStatusLabel(statusStr: <#T##String#>)
-//            }
             DispatchQueue.main.async {
                 self.mainView.tableView.reloadData()
             }
         }
-        
         Room.observeReadyStateInProgress(ref: viewModel.ref, roomId: roomId) { (inProgress) in
             viewModel.inProgress = inProgress
         }
@@ -135,24 +131,73 @@ class ReadyRoomViewController: UIViewController {
         }
     }
     
-    @objc func handleAddUser() {
+    @objc func handleRoomOptions() {
+        let optionMenu = UIAlertController(title: nil, message: "Choose Option", preferredStyle: .actionSheet)
+        let addUserAction = UIAlertAction(title: "Add User", style: .default) { [weak self] (action) in
+            self?.addUser()
+        }
+        let updateTitleAction = UIAlertAction(title: "Update Title", style: .default) { [weak self] (action) in
+            self?.updateTitle()
+        }
+
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+        optionMenu.addAction(addUserAction)
+        optionMenu.addAction(updateTitleAction)
+        optionMenu.addAction(cancelAction)
+
+        self.present(optionMenu, animated: true, completion: nil)
+    }
+    
+    func addUser() {
         guard let room = viewModel?.room else { return }
         let roomId = room.id!
         
-        let alert = UIAlertController(title: "Add User", message: "Enter a user Id", preferredStyle: UIAlertController.Style.alert)
-        let action = UIAlertAction(title: "Add", style: .default) { (alertAction) in
+        let alert = UIAlertController(title: "Add User", message: "Enter a User Id", preferredStyle: UIAlertController.Style.alert)
+        let addAction = UIAlertAction(title: "Add", style: .default) { [weak self] (alertAction) in
             let textField = alert.textFields![0] as UITextField
-            let ref = self.viewModel!.ref
-            let currentUser = Auth.auth().currentUser
-            Room.addNewUser(ref: ref, userId: textField.text!, roomId: roomId)
+            let ref = self?.viewModel!.ref
+//            let currentUser = Auth.auth().currentUser
+            Room.addNewUser(ref: ref!, userId: textField.text!, roomId: roomId)
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            //
         }
         
         alert.addTextField { (textField) in
             textField.placeholder = "Enter the unique id of the user"
         }
         
-        alert.addAction(action)
-        self.present(alert, animated:true, completion: nil)
+        alert.addAction(addAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
+    }
+    
+    func updateTitle() {
+        
+        let alert = UIAlertController(title: "New Title", message: "Enter an interesting title..", preferredStyle: UIAlertController.Style.alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Meetings, schedules, lists"
+        }
+        
+        let updateAction = UIAlertAction(title: "Update", style: .default) { [weak self] (alertAction) in
+            let textField = alert.textFields![0] as UITextField
+            let ref = self?.viewModel!.ref
+            let roomId = self?.viewModel?.room?.id
+            let messageStr = textField.text ?? ""
+            self?.viewModel?.roomTitle = textField.text ?? ""
+            
+            //limit title length
+            Room.updateMessage(ref: ref!, roomId: roomId!, message: "\(messageStr.uppercased())")
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            //
+        }
+        
+        alert.addAction(updateAction)
+        alert.addAction(cancelAction)
+        self.present(alert, animated: true, completion: nil)
     }
     
     @objc func handleClose() {
@@ -165,3 +210,8 @@ class ReadyRoomViewController: UIViewController {
 }
 
 
+extension UIBarButtonItem {
+    open override func titleTextAttributes(for state: UIControl.State) -> [NSAttributedString.Key : Any]? {
+        return [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!]
+    }
+}

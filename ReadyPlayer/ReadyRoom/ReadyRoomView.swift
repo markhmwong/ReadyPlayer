@@ -32,11 +32,25 @@ class ReadyRoomView: UIView {
         return view
     }()
     
+    lazy var initiateCheckButton: StandardButton = {
+        let button = StandardButton(title: "start")
+        button.addTarget(self, action: #selector(handleInitiateButton), for: .touchUpInside)
+        return button
+    }()
+    
+    lazy var readyButton: StandardButton = {
+        let button = StandardButton(title: "READY")
+        button.isHidden = true
+        button.backgroundColor = .green
+        button.addTarget(self, action: #selector(handleReadyButton), for: .touchUpInside)
+        return button
+    }()
+    
     lazy var tableView: UITableView = {
         let view = UITableView()
         view.backgroundColor = Theme.GeneralView.background
         view.separatorStyle = UITableViewCell.SeparatorStyle.none
-        view.rowHeight = UIScreen.main.bounds.height / 8.0
+        view.rowHeight = UIScreen.main.bounds.height / 15.0
         view.delegate = self
         view.dataSource = self
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -62,8 +76,51 @@ class ReadyRoomView: UIView {
         headerView.layoutIfNeeded()
         
         addSubview(tableView)
+        addSubview(initiateCheckButton)
+        addSubview(readyButton)
         
+        initiateCheckButton.anchorView(top: nil, bottom: bottomAnchor, leading: leadingAnchor, trailing: trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: CGSize(width: 0, height: UIScreen.main.bounds.height / 12))
+        readyButton.anchorView(top: nil, bottom: bottomAnchor, leading: leadingAnchor, trailing: trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: CGSize(width: 0, height: UIScreen.main.bounds.height / 12))
+
         tableView.register(UserCell.self, forCellReuseIdentifier: viewModel.cellId)
         tableView.fillSuperView()
+    }
+    
+    @objc func handleInitiateButton() {
+        guard let vm = delegate?.viewModel else { return }
+        
+        //initiate countdown
+        vm.localBegins = Date()
+        vm.expires = vm.localBegins?.addingTimeInterval(vm.timerLimit)
+        vm.startTimer()
+        
+        readyButton.alpha = 0.5
+        readyButton.isEnabled = false
+        // cloud functions sends notifications to users in chat room
+        let room = vm.room
+        
+        let list = resetUserState(initiatorUserId: vm.myUserId)
+        Room.readyStateUpdate(ref: vm.ref, userId: User.getCurrentLoggedInUserKey(), roomId: room?.id ?? "", state: true, timeLimit: vm.timerLimit, userState: list)
+    }
+    
+    func resetUserState(initiatorUserId: String) -> [String : Bool] {
+        guard let vm = delegate?.viewModel else { return [:] }
+        var userDict: [String : Bool] = [:]
+        for user in vm.userDataSource {
+            if (user.userId! == initiatorUserId) {
+                userDict[user.userId!] = true
+            } else {
+                userDict[user.userId!] = false
+            }
+            
+        }
+        return userDict
+    }
+    
+    @objc func handleReadyButton() {
+        print("ready Button")
+        guard let viewModel = delegate?.viewModel else { return }
+        let ref = viewModel.ref
+        Room.playerReadyUpdate(ref: ref, userId: viewModel.myUserId, roomId: (viewModel.room?.id!)!, state: true)
     }
 }

@@ -26,18 +26,33 @@ class ReadyRoomViewModel {
     
     var userDataSource: [User] = []
     
-    var didInitiate: Bool?
     
     var myUserId: String = User.getCurrentLoggedInUserKey()
     
+    var roomTitle: String?
+    
     var inProgress: Bool? {
         didSet {
-            
             if inProgress ?? false {
-                delegate?.mainView.headerView.readyButton.isHidden = false
+                delegate?.mainView.readyButton.isHidden = false
+                delegate?.mainView.readyButton.isEnabled = true
+                for user in userDataSource {
+                    if (myUserId == user.userId && user.state == true) {
+                        delegate?.mainView.readyButton.isEnabled = false
+                        delegate?.mainView.readyButton.alpha = 0.5
+                    }
+                }
+                
+
+                delegate?.mainView.initiateCheckButton.alpha = 0.0
+                delegate?.mainView.initiateCheckButton.isEnabled = false
                 startTimer()
             } else {
-                delegate?.mainView.headerView.readyButton.isHidden = true
+                delegate?.mainView.readyButton.isHidden = true
+                delegate?.mainView.readyButton.isEnabled = false
+                
+                delegate?.mainView.initiateCheckButton.alpha = 1.0
+                delegate?.mainView.initiateCheckButton.isEnabled = true
             }
         }
     }
@@ -81,8 +96,8 @@ class ReadyRoomViewModel {
         }
         
         if (time <= 0) {
-            // count is complete, reset room
-            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0)
+            // count is complete
+            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0, userState: [:])
             stopTimer()
         }
         timeRemaining = time.rounded(.down)

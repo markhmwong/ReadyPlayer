@@ -16,8 +16,25 @@ class UserCell: UITableViewCell {
             let userNameStr = "\(user?.userName ?? "UnknownName")"
             
             textLabel?.attributedText = NSAttributedString(string: userNameStr.uppercased(), attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
-            print("\(user?.state)")
-            status.attributedText = NSAttributedString(string: "READY", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+            
+            guard let state = user?.state else {
+                status.attributedText = NSAttributedString(string: "NOT READY", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+                contentView.addSubview(status)
+                return
+            }
+            var stateStr = ""
+            var stateColor: UIColor = .red
+            if (state) {
+                stateStr = "READY"
+                stateColor = .green
+            } else {
+                stateStr = "NOT READY"
+                stateColor = .red
+            }
+            
+            status.backgroundColor = stateColor
+            status.textAlignment = .center
+            status.attributedText = NSAttributedString(string: stateStr, attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
             contentView.addSubview(status)
             status.anchorView(top: topAnchor, bottom: bottomAnchor, leading: centerXAnchor, trailing: trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
         }

@@ -14,7 +14,7 @@ admin.initializeApp()
 // Invite to Room notification - method notifies the user with an invitation to a ready room receives an invitation
 // export const inviteUser = functions.database.ref('/')
 
-// Check all participants
+// Check all participants - immediately ends the check if all participants are ready
 
 // Observe all participants - While progress check is live, observe the values from each participant
 export const participantIncrement = functions.database.ref('/roomsCheck/{roomId}/userState/{userId}').onUpdate((change, context) => {
@@ -35,7 +35,7 @@ export const readyCheckBegan = functions.database.ref('/roomsCheck/{roomId}').on
     const before = change.before.val();
     const after = change.after.val();
     const roomId = context.params.roomId;
-    const roomName = admin.database().ref('/rooms/' + roomId).child('name');
+    // const roomName = admin.database().ref('/rooms/' + roomId).child('name');
     var state: Boolean = true;
 
     // nothing changed
@@ -44,23 +44,6 @@ export const readyCheckBegan = functions.database.ref('/roomsCheck/{roomId}').on
     }
 
     if (after.inProgress === true) {
-
-        let dict = change.after.child('userState').val();
-        for (const key in dict) {
-            if (dict.hasOwnProperty(key)) {
-                console.log(key, dict[key]);
-                if (dict[key] === false) {
-                    state = false;
-                }
-            }
-        }
-
-        //reset userState
-        for (const key in dict) {
-            if (dict.hasOwnProperty(key)) {
-                dict[key] = false
-            }
-        }
 
         const payload = {
             notification: {
@@ -71,7 +54,6 @@ export const readyCheckBegan = functions.database.ref('/roomsCheck/{roomId}').on
 
         try {
             // update and reset the state of the roomCheck
-            await change.after.ref.update({ numCheck: 0, userState: dict });
             return admin.messaging().sendToTopic(roomId, payload)
         }
         catch (error) {

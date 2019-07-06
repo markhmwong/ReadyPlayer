@@ -10,7 +10,7 @@ import UIKit
 import Firebase
 import SwiftKeychainWrapper
 
-class MainViewController: UIViewController {
+class MainViewController: UIViewController, UITextFieldDelegate {
 
     var viewModel: MainViewModel?
     
@@ -161,14 +161,32 @@ class MainViewController: UIViewController {
         }
     }
     
+    enum RoomCreationLabels: Int {
+        case RoomTitle
+        case RoomMessage
+    }
+    
+    var createAction: UIAlertAction?
+    
     @objc func handleCreateRoom() {
-        let alert = UIAlertController(title: "Create Room", message: "Enter an interesting room name", preferredStyle: UIAlertController.Style.alert)
-        let action = UIAlertAction(title: "Room Name", style: .default) { (alertAction) in
-            let textField = alert.textFields![0] as UITextField
+        
+        //create new pop up fields in viewcontroller
+        
+        let alert = UIAlertController(title: "Create Room", message: "Enter your gathering", preferredStyle: UIAlertController.Style.alert)
+        
+        createAction = UIAlertAction(title: "Create", style: .default) { (alertAction) in
+            let roomTitleTextField = alert.textFields![RoomCreationLabels.RoomTitle.rawValue]
+            let roomMessageTextField = alert.textFields![RoomCreationLabels.RoomMessage.rawValue]
+            
+            if (roomMessageTextField.text!.isEmpty) {
+                roomMessageTextField.text = "Ready Room"
+            }
+            
+            
             let ref = self.viewModel!.ref
             let currentUser = Auth.auth().currentUser
             
-            Room.createRoom(ref: ref, name: textField.text!, creatorId: currentUser!.uid, completionHandler: {
+            Room.createRoom(ref: ref, name: roomTitleTextField.text!, message: roomMessageTextField.text!, creatorId: currentUser!.uid, completionHandler: {
                 //refresh room list - look for another method to do this. Althought new rooms aren't created frequently this may be okay
                 Room.getRoomsFrom(ref: self.viewModel!.ref, userId: currentUser!.uid) { (roomArr) in
                     //assign to tableview
@@ -176,15 +194,26 @@ class MainViewController: UIViewController {
                 }
             })
         }
+        createAction?.isEnabled = false
         
         alert.addTextField { (textField) in
-            textField.placeholder = "Enter your name"
+            textField.delegate = self
+            textField.addTarget(self, action: #selector(self.textFieldIsEditing), for: .editingChanged)
+            textField.tag = RoomCreationLabels.RoomTitle.rawValue
+            textField.placeholder = "A Room needs a name"
         }
         
-        alert.addAction(action)
+        alert.addTextField { (textField) in
+            textField.tag = RoomCreationLabels.RoomMessage.rawValue
+            textField.placeholder = "Describe the occasion.. (optional)"
+        }
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+
+        alert.addAction(cancelAction)
+        alert.addAction(createAction!)
         self.present(alert, animated:true, completion: nil)
     }
-    
     
     @objc func handleProfile() {
         let vc = ProfileViewController(delegate: self, viewModel: ProfileViewModel())
@@ -200,6 +229,23 @@ class MainViewController: UIViewController {
             self.roomTableView.reloadData()
         }
     }
+    
+    @objc func textFieldIsEditing(_ textField: UITextField) {
+        
+        if let tf = RoomCreationLabels.init(rawValue: textField.tag) {
+            
+            switch tf {
+            case .RoomTitle:
+                if (textField.text!.count <= 3) {
+                    createAction?.isEnabled = false
+                } else {
+                    createAction?.isEnabled = true
+                }
+            case .RoomMessage:
+                ()//optional message
+            }
+            
+        }
+        
+    }
 }
-
-
