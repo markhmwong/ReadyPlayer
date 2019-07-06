@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 firebase-debug.log*
 
+ReadyPlayer.entitlements
+
 # Firebase cache
 .firebase/
 
