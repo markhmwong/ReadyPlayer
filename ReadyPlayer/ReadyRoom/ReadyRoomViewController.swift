@@ -40,10 +40,6 @@ class ReadyRoomViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavBar()
-        
-//        let titleLabel = UILabel(frame: .zero)
-//        titleLabel.attributedText = NSAttributedString(string: "", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
-//        navigationItem.titleView = titleLabel
         view.backgroundColor = Theme.GeneralView.background
         view.addSubview(mainView)
         mainView.fillSuperView()
@@ -129,6 +125,11 @@ class ReadyRoomViewController: UIViewController {
         Room.observeReadyStateDate(ref: viewModel.ref, roomId: roomId) { (date) in
             viewModel.expires = date
         }
+        
+        Room.observeRoomMessage(ref: viewModel.ref, roomId: roomId) { (message) in
+            viewModel.roomMessage = message
+        }
+        
     }
     
     @objc func handleRoomOptions() {
@@ -157,7 +158,6 @@ class ReadyRoomViewController: UIViewController {
         let addAction = UIAlertAction(title: "Add", style: .default) { [weak self] (alertAction) in
             let textField = alert.textFields![0] as UITextField
             let ref = self?.viewModel!.ref
-//            let currentUser = Auth.auth().currentUser
             Room.addNewUser(ref: ref!, userId: textField.text!, roomId: roomId)
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (action) in

@@ -118,7 +118,6 @@ class ReadyRoomView: UIView {
     }
     
     @objc func handleReadyButton() {
-        print("ready Button")
         guard let viewModel = delegate?.viewModel else { return }
         let ref = viewModel.ref
         Room.playerReadyUpdate(ref: ref, userId: viewModel.myUserId, roomId: (viewModel.room?.id!)!, state: true)

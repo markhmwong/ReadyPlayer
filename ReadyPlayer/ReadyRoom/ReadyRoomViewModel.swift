@@ -26,10 +26,15 @@ class ReadyRoomViewModel {
     
     var userDataSource: [User] = []
     
-    
     var myUserId: String = User.getCurrentLoggedInUserKey()
     
     var roomTitle: String?
+    
+    var roomMessage: String? {
+        didSet {
+            delegate?.mainView.headerView.updateMessage(message: roomMessage!)
+        }
+    }
     
     var inProgress: Bool? {
         didSet {

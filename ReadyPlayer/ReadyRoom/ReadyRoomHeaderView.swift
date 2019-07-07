@@ -37,7 +37,7 @@ class ReadyRoomHeaderView: UIView {
         return label
     }()
     
-    lazy var roomTitle: UILabel = {
+    lazy var roomMessage: UILabel = {
         let label = UILabel()
         label.attributedText = NSAttributedString(string: "", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -61,19 +61,17 @@ class ReadyRoomHeaderView: UIView {
         widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width).isActive = true
         
         addSubview(roomName)
-        addSubview(roomTitle)
+        addSubview(roomMessage)
         addSubview(time)
-//        addSubview(readyButton)
         roomName.anchorView(top: topAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: UIEdgeInsets(top: 10.0, left: 0.0, bottom: 0.0, right: 0.0), size: .zero)
-        roomTitle.anchorView(top: roomName.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0), size: .zero)
-        time.anchorView(top: roomTitle.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
-//        readyButton.anchorView(top: time.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
+        roomMessage.anchorView(top: roomName.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0), size: .zero)
+        time.anchorView(top: roomMessage.bottomAnchor, bottom: nil, leading: nil, trailing: nil, centerY: nil, centerX: centerXAnchor, padding: .zero, size: .zero)
         guard let viewModel = delegate?.viewModel else { return }
         guard let room = viewModel.room else { return }
         let roomNameStr = room.name?.uppercased()
-        let roomTitleStr = room.title?.uppercased()
+        let roomTitleStr = room.message?.uppercased()
         
-        roomTitle.attributedText = NSAttributedString(string: roomTitleStr ?? "Unknown Name", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+        roomMessage.attributedText = NSAttributedString(string: roomTitleStr ?? "Unknown Name", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
         roomName.attributedText = NSAttributedString(string: roomNameStr ?? "Unknown Name", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.h4).value)!])
     }
     
@@ -81,9 +79,8 @@ class ReadyRoomHeaderView: UIView {
         time.attributedText = NSAttributedString(string: timeStr , attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.h4).value)!])
     }
     
-//    @objc func handleReadyButton() {
-//        guard let viewModel = delegate?.viewModel else { return }
-//        let ref = viewModel.ref
-//        Room.playerReadyUpdate(ref: ref, userId: viewModel.myUserId, roomId: (viewModel.room?.id!)!, state: true)
-//    }
+    func updateMessage(message: String) {
+        roomMessage.attributedText = NSAttributedString(string: message , attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b2).value)!])
+    }
+
 }

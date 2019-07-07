@@ -74,6 +74,7 @@ extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFie
             if let row = ProfileViewModel.UserSettings.init(rawValue: indexPath.row) {
                 switch row {
                 case ProfileViewModel.UserSettings.Username:
+                    
                     let tf = UITextField(frame: .zero)
                     tf.keyboardAppearance = .dark
                     tf.translatesAutoresizingMaskIntoConstraints = false
@@ -85,6 +86,7 @@ extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFie
                     cell.contentView.addSubview(tf)
                     tf.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
                 case ProfileViewModel.UserSettings.UserId:
+                    
                     let textView = UITextView()
                     let userIdStr = KeychainWrapper.standard.string(forKey: "userId")
                     textView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,8 +94,29 @@ extension ProfileMainView: UITableViewDataSource, UITableViewDelegate, UITextFie
                     textView.isEditable = false
                     textView.isSelectable = true
                     textView.attributedText = NSAttributedString(string: userIdStr ?? "unknown userid", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!])
+
+                    
+                    let copyButton = UIButton()
+                    copyButton.backgroundColor = .clear
+                    copyButton.setAttributedTitle(NSAttributedString(string: "COPY", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!]), for: .normal)
+                    copyButton.addTarget(self, action: #selector(handleCopy), for: .touchUpInside)
+                    copyButton.translatesAutoresizingMaskIntoConstraints = false
+                    
+                    let shareButton = UIButton()
+                    shareButton.backgroundColor = .clear
+                    shareButton.setAttributedTitle(NSAttributedString(string: "SHARE", attributes: [NSAttributedString.Key.foregroundColor : Theme.Font.Color, NSAttributedString.Key.font: UIFont(name: Theme.Font.Name, size: Theme.Font.FontSize.Standard(.b3).value)!]), for: .normal)
+                    shareButton.addTarget(self, action: #selector(handleShare), for: .touchUpInside)
+                    shareButton.translatesAutoresizingMaskIntoConstraints = false
+                    
+                    cell.contentView.addSubview(copyButton)
+                    cell.contentView.addSubview(shareButton)
                     cell.contentView.addSubview(textView)
-                    textView.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+                    
+                    textView.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: cell.centerXAnchor, trailing: copyButton.leadingAnchor, centerY: nil, centerX: nil, padding: UIEdgeInsets(top: 0.0, left: 5.0, bottom: 0.0, right: -5.0), size: .zero)
+                    shareButton.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: copyButton.trailingAnchor, trailing: cell.trailingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+                    
+                    copyButton.anchorView(top: cell.topAnchor, bottom: cell.bottomAnchor, leading: nil, trailing: shareButton.leadingAnchor, centerY: nil, centerX: nil, padding: .zero, size: .zero)
+
                 }
             }
         }

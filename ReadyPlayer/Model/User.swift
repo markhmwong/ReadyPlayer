@@ -21,6 +21,8 @@ class User: NSObject {
 
 extension User {
     
+    // get user from keychain
+    
     static func getCurrentLoggedInUserKey() -> UserId {
         return Auth.auth().currentUser?.uid ?? ""
     }

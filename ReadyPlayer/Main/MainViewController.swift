@@ -92,14 +92,14 @@ class MainViewController: UIViewController, UITextFieldDelegate {
             self.awaitToken.notify(queue: .main, execute: {
                 
                 let userIdRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)")
-                let nameRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)/userName")
+//                let nameRef = ref.child("\(DatabaseReferenceKeys.users.rawValue)/\(uid!)/userName")
                 
                 userIdRef.observeSingleEvent(of: .value, with: { (snapShot) in
                     // initialises the profile
                     if (!snapShot.exists()) {
                         
                         let initialProfileData = [
-                            "userId" : uid,
+                            "userId" : uid!,
                             "userName" : "Guest",
                             "token" : deviceToken,
                             "created" : Date().timeIntervalSinceReferenceDate

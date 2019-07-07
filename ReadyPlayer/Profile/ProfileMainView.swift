@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SwiftKeychainWrapper
 
 class ProfileMainView: UIView {
     
@@ -40,5 +41,20 @@ class ProfileMainView: UIView {
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: viewModel.cellId)
         addSubview(tableView)
         tableView.fillSuperView()
+    }
+    
+    @objc func handleCopy() {
+        let userIdStr = KeychainWrapper.standard.string(forKey: "userId")
+        UIPasteboard.general.string = userIdStr
+    }
+    
+    @objc func handleShare() {
+        guard let vm = delegate?.viewModel else {
+            return
+        }
+        let text = "userId"
+        let vc = UIActivityViewController(activityItems: [text], applicationActivities: [])
+        
+        delegate?.present(vc, animated: true, completion: nil)
     }
 }

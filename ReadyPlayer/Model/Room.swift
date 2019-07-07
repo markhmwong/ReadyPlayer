@@ -21,7 +21,7 @@ class Room: NSObject {
     
     var inProgress: Bool?
     
-    var title: String?
+    var message: String?
     
     static var awaitRoom = DispatchGroup()
     
@@ -31,7 +31,7 @@ class Room: NSObject {
         self.inviteLink = dictionary["inviteLink"] as? String
         self.name = dictionary["name"] as? String
         self.inProgress = dictionary["inProgress"] as? Bool
-        self.title = dictionary["title"] as? String
+        self.message = dictionary["message"] as? String
     }
 }
 
@@ -190,6 +190,14 @@ extension Room {
                 return
             }
             completionHandler(inProgress)
+        }
+    }
+    
+    static func observeRoomMessage(ref: DatabaseReference, roomId: String, completionHandler: @escaping (String) -> Void) -> Void {
+        let roomCheckRef = ref.child("\(DatabaseReferenceKeys.rooms.rawValue)/\(roomId)/message")
+        roomCheckRef.observe(.value) { (snapshot) in
+            let message = snapshot.value as? String
+            completionHandler(message ?? "")
         }
     }
     
