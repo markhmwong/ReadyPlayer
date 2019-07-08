@@ -102,7 +102,12 @@ class ReadyRoomViewModel {
         
         if (time <= 0) {
             // count is complete
-            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0, userState: [:])
+            var userList: [String] = []
+            // Prepares list to update organise userids into an array
+            for user in userDataSource {
+                userList.append(user.userId ?? "") //deal with missing key?
+            }
+            Room.readyStateUpdate(ref: ref, userId: myUserId, roomId: room!.id!, state: false, timeLimit: 0.0, userList: userList, userState: [:])
             stopTimer()
         }
         timeRemaining = time.rounded(.down)

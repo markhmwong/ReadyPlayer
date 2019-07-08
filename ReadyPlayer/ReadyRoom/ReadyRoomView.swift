@@ -100,7 +100,14 @@ class ReadyRoomView: UIView {
         let room = vm.room
         
         let list = resetUserState(initiatorUserId: vm.myUserId)
-        Room.readyStateUpdate(ref: vm.ref, userId: User.getCurrentLoggedInUserKey(), roomId: room?.id ?? "", state: true, timeLimit: vm.timerLimit, userState: list)
+        var userList: [String] = []
+        // list of user keys
+        for user in vm.userDataSource {
+            userList.append(user.userId ?? "") //deal with missing key?
+        }
+        
+        Room.readyStateUpdate(ref: vm.ref, userId: User.getCurrentLoggedInUserKey(), roomId: room?.id ?? "", state: true, timeLimit: vm.timerLimit, userList: userList, userState: list)
+        
     }
     
     func resetUserState(initiatorUserId: String) -> [String : Bool] {

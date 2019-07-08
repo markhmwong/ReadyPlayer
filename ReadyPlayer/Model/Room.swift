@@ -127,19 +127,19 @@ extension Room {
     }
     
     // Updates the roomsCheck node
-    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double, userState: [String : Bool]) -> Void {
+    static func readyStateUpdate(ref: DatabaseReference, userId: String, roomId: String, state: Bool, timeLimit: Double, userList: [String], userState: [String : Bool]) -> Void {
         let roomCheckRef = ref.child("\(DatabaseReferenceKeys.roomsCheck.rawValue)/\(roomId)")
         var data: [String: Any] = [:]
-        var userRoomsData: [String: Any] = ["\(roomId)" : true]
-        
+//        var userRoomsData: [String: Any] = ["\(roomId)" : true]
+//        var userRooms: [String : Bool] = []
         if (state == true) {
             // initiate check - room should begin with default values
             data = ["numCheck" : 0, "inProgress" : state, "checkBeganDate" : Date().timeIntervalSinceReferenceDate, "expires" :  Date().addingTimeInterval(timeLimit).timeIntervalSinceReferenceDate, "userState" : userState] as [String : Any]
-            userRoomsData = ["\(roomId)" : state]
+//            userRoomsData = ["\(roomId)" : state]
         } else {
             // reset check
             data = ["inProgress" : state, "checkBeganDate" : -1.0, "expires" : -1.0] as [String : Any]
-            userRoomsData = ["\(roomId)" : state]
+//            userRoomsData = ["\(roomId)" : state]
         }
         
         roomCheckRef.updateChildValues(data) { (err, _) in
@@ -148,13 +148,27 @@ extension Room {
                 return
             }
             
-            let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
-            userRoomsRef.updateChildValues(userRoomsData) { (err, ref) in
+//            let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
+//            userRoomsRef.updateChildValues(userRoomsData) { (err, ref) in
+//                if (err != nil) {
+//                    print("Error updating ready state")
+//                    return
+//                }
+//            }
+            var paths: [String: Bool] = [:]
+            for userId in userList {
+                let pathKey = "/\(userId)/\(roomId)"
+                paths[pathKey] = state
+            }
+            
+            
+            let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)")
+            userRoomsRef.updateChildValues(paths) { (err, _) in
                 if (err != nil) {
-                    print("Error updating ready state")
+                    print("Error updating player's room state'")
                     return
                 }
-            }
+            }            
         }
     }
     
@@ -186,9 +200,11 @@ extension Room {
     static func observeReadyStateByUser(ref: DatabaseReference, userId: String, completionHandler: @escaping ([String : Bool]) -> Void) {
         let userRoomsRef = ref.child("\(DatabaseReferenceKeys.userRooms.rawValue)/\(userId)")
         userRoomsRef.observe(.value) { (snapShot) in
+            print("observe")
             guard let inProgress = snapShot.value as? [String : Bool] else {
                 return
             }
+            
             completionHandler(inProgress)
         }
     }

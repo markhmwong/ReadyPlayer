@@ -16,11 +16,32 @@ admin.initializeApp()
 
 // Check all participants - immediately ends the check if all participants are ready
 
+// Propagate ready state to all users in the same room
+// export const propagateState = functions.database.ref('/roomsCheck/{roomId}/inProgress').onUpdate((change, context) => {
+//     console.log("inProgress");
+//     const roomId = context.params.roomId;
+//     const after = change.after.val();
+
+//     if (after === true) {
+//         //get userState
+//         // const userState = snapshot.child('name').val();
+        
+//         const userState = admin.database().ref('/roomsCheck/' + roomId + '/userState');
+
+//         for (const key in dict) {
+//         }
+//     }
+
+//     // change.after.ref.update({ numCheck: 0 });
+
+
+// });
+
 // Observe all participants - While progress check is live, observe the values from each participant
 export const participantIncrement = functions.database.ref('/roomsCheck/{roomId}/userState/{userId}').onUpdate((change, context) => {
     const roomId = context.params.roomId;
     const after = change.after.val();
-    //need to test
+
     if (after === true) {
         const numCheck = admin.database().ref('/roomsCheck/' + roomId + '/numCheck');
         return numCheck.transaction(count => {
@@ -52,15 +73,45 @@ export const readyCheckBegan = functions.database.ref('/roomsCheck/{roomId}').on
             }
         };
 
+
         try {
             // update and reset the state of the roomCheck
+
+            // let dict = change.after.child('userState').val();
+            // let tempDict = {};
+            // for (const key in dict) {
+            //     if (dict.hasOwnProperty(key)) {
+            //         let userId = dict[key]
+                    
+            //         console.log(userId);
+            //         console.log(key);
+                    
+            //         tempDict[userId] = true
+            //     }
+            // }
+            // console.log(roomId);
+            // // const userStateRef = admin.database().ref('/userRooms/' + roomId);
+            // // await userStateRef.update(tempDict);
+            // // await userStateRef.set(tempDict);
+
+            // var dict = change.after.child('userState').val();
+            // var userIds = [];
+            // for (const key in dict) {
+            //     if (dict.hasOwnProperty(key)) {
+            //         userIds.push(key);
+            //     }
+            // }
+            // let a = 'key';
+            // var usersToUpdate = {};
+
+            // for (const id in userIds) {
+            //     usersToUpdate[`/${id}/name`] = true;
+            // }
             return admin.messaging().sendToTopic(roomId, payload)
         }
         catch (error) {
             console.log("Error: ", error);
-        }
-
-
+        }        
     } else {
         // at this stage the ready check is complete
         // we will send a notification to all users subscribed to this room (topic)
@@ -71,7 +122,7 @@ export const readyCheckBegan = functions.database.ref('/roomsCheck/{roomId}').on
         
         for (const key in dict) {
             if (dict.hasOwnProperty(key)) {
-                console.log(key, dict[key]);
+                // console.log(key, dict[key]);
                 if (dict[key] === false) {
                     state = false;
                 }
